@@ -113,17 +113,6 @@ namespace Rock.Security.ExternalAuthentication
             }
         }
 
-        ///<summary>
-        ///JSON Class for Access Token Response
-        ///</summary>
-        public class accesstokenresponse
-        {
-            public string access_token { get; set; }
-            public string id_token { get; set; }
-            public int expires_in { get; set; }
-            public string token_type { get; set; }
-        }
-
         /// <summary>
         /// Authenticates the specified request.
         /// </summary>
@@ -383,4 +372,32 @@ namespace Rock.Security.ExternalAuthentication
             }
         }
     }
+}
+
+///<summary>
+///JSON class for Access Token Response
+///</summary>
+public class accesstokenresponse
+{
+    public string access_token { get; set; }
+    public string id_token { get; set; }
+    public int expires_in { get; set; }
+    public string token_type { get; set; }
+}
+
+///<summary>
+///JSON class for deserialized id_token
+///</summary>
+public class idtoken
+{
+    public string iss { get; set; }
+    public string at_hash { get; set; }
+    public string email_verified { get; set; }
+    public string sub { get; set; }
+    public string azp { get; set; }
+    public string email { get; set; }
+    public string aud { get; set; }
+    public int iat { get; set; }
+    public int exp { get; set; }
+    public string hd { get; set; }
 }
