@@ -119,6 +119,7 @@ namespace Rock.Security.ExternalAuthentication
         public class accesstokenresponse
         {
             public string access_token { get; set; }
+            public string id_token { get; set; }
             public int expires_in { get; set; }
             public string token_type { get; set; }
         }
@@ -154,6 +155,11 @@ namespace Rock.Security.ExternalAuthentication
                 {
                     var accesstokenresponse = JsonConvert.DeserializeObject<accesstokenresponse>(restResponse.Content);
                     string accessToken = accesstokenresponse.access_token;
+                    string hd = GetAttributeValue("HostedDomain");
+                    if (!string.IsNullOrWhiteSpace(hd))
+                    {
+                        string[] tokenArray = accesstokenresponse.id_token.Split(new Char[] { '.' });
+                    }
 
                     // Get information about the person who logged in using Google
                     restRequest = new RestRequest(Method.GET);
