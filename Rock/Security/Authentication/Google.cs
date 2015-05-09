@@ -133,7 +133,9 @@ namespace Rock.Security.ExternalAuthentication
         public override Boolean Authenticate( HttpRequest request, out string username, out string returnUrl )
         {
             username = string.Empty;
-            returnUrl = request.QueryString["State"];
+            string stateurl = request.QueryString["State"];
+            string[] splitstateurl = stateurl.Split(new Char[] { '.' });
+            returnUrl = splitstateurl[1];
             string redirectUri = GetRedirectUrl(request);
 
             try
