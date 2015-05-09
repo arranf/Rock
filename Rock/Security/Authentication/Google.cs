@@ -90,14 +90,18 @@ namespace Rock.Security.ExternalAuthentication
         /// <returns></returns>
         public override Uri GenerateLoginUrl( HttpRequest request )
         {
-            string returnUrl = request.QueryString["returnurl"];
+            string returnUrl = request.QueryString["returnurl"] ?? FormsAuthentication.DefaultUrl;
             string redirectUri = GetRedirectUrl(request);
-
-            return new Uri(string.Format("https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}&state={2}&scope=email profile",
-                GetAttributeValue("ClientID"),
-                HttpUtility.UrlEncode(redirectUri),
-                HttpUtility.UrlEncode(returnUrl ?? FormsAuthentication.DefaultUrl)));
             string hd = GetAttributeValue("HostedDomain");
+            var g = Guid.NewGuid();
+            string unique = Convert.ToBase64String(g.ToByteArray());
+            unique = unique.Replace("=", "");
+            unique = unique.Replace("+", "");
+            string state = unique+"."+returnUrl;
+            string loginurl = string.Format("https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={0}&redirect_uri={1}&state={2}&scope=email profile",
+                    GetAttributeValue("ClientID"),
+                    HttpUtility.UrlEncode(redirectUri),
+                    state);
             if ( !string.IsNullOrWhiteSpace(hd) )
             { 
                 string loginurlwithhd = loginurl + "&hd=" + hd;
