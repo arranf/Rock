@@ -44,7 +44,8 @@ namespace Rock.Security.ExternalAuthentication
 
     [TextField("Client ID", "The Google Client ID")]
     [TextField("Client Secret", "The Google Client Secret")]
-    
+    [TextField("Hosted Domain", "The Google Hosted Domain")]
+
     public class Google : AuthenticationComponent
     {
         /// <summary>
@@ -96,6 +97,16 @@ namespace Rock.Security.ExternalAuthentication
                 GetAttributeValue("ClientID"),
                 HttpUtility.UrlEncode(redirectUri),
                 HttpUtility.UrlEncode(returnUrl ?? FormsAuthentication.DefaultUrl)));
+            string hd = GetAttributeValue("HostedDomain");
+            if ( !string.IsNullOrWhiteSpace(hd) )
+            { 
+                string loginurlwithhd = loginurl + "&hd=" + hd;
+                return new Uri(loginurlwithhd);
+            }
+            else
+            {
+                return new Uri(loginurl);
+            }
         }
 
         ///<summary>
