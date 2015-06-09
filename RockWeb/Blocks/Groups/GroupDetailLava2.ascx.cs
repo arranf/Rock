@@ -577,8 +577,7 @@ namespace RockWeb.Blocks.Groups
                                                 </ul>";
 
                     lDebug.Visible = true;
-                    lDebug.Text = mergeFields.lavaDebugInfo( null, "", 
-Commands );
+                    lDebug.Text = mergeFields.lavaDebugInfo(null, "", postbackCommands);
                 }
 
                 lContent.Text = template.ResolveMergeFields( mergeFields ).ResolveClientIds( upnlContent.ClientID );
