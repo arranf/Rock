@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="GroupDetailLava2.ascx.cs" Inherits="RockWeb.Blocks.Groups.GroupDetailLava" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeFile="GroupDetailLava2.ascx.cs" Inherits="RockWeb.Blocks.Groups.GroupDetailLava2" %>
 
 <asp:UpdatePanel ID="upnlContent" runat="server">
     <ContentTemplate>

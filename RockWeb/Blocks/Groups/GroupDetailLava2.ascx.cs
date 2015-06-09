@@ -54,7 +54,7 @@ namespace RockWeb.Blocks.Groups
     [CodeEditorField( "Edit Group Post-HTML", "HTML to display after the edit group panel.", CodeEditorMode.Html, CodeEditorTheme.Rock, 200, false, "", "HTML Wrappers", 10 )]
     [CodeEditorField( "Edit Group Member Pre-HTML", "HTML to display before the edit group member panel.", CodeEditorMode.Html, CodeEditorTheme.Rock, 200, false, "", "HTML Wrappers", 11 )]
     [CodeEditorField( "Edit Group Member Post-HTML", "HTML to display after the edit group member panel.", CodeEditorMode.Html, CodeEditorTheme.Rock, 200, false, "", "HTML Wrappers", 12 )]
-    public partial class GroupDetailLava : Rock.Web.UI.RockBlock
+    public partial class GroupDetailLava2 : Rock.Web.UI.RockBlock
     {
         #region Fields
 
