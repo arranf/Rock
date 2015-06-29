@@ -269,6 +269,15 @@ namespace Rock.Model
         public DateTime? AnniversaryDate { get; set; }
 
         /// <summary>
+        /// Gets or sets the review date time.
+        /// </summary>
+        /// <value>
+        /// The last time this person's information was reviewed to be correct
+        /// </value>
+        [DataMember]
+        public DateTime? ReviewedDateTime { get; set; }
+
+        /// <summary>
         /// Gets or sets the date of the Person's projected or actual high school graduation year. This value is used to determine what grade a student is in.
         /// </summary>
         /// <value>
