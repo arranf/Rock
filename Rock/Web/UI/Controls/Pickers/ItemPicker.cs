@@ -616,7 +616,7 @@ namespace Rock.Web.UI.Controls
                 {
                     string pickerLabelHtmlFormat = @"
                     <a class='picker-label' href='#'>
-                        <i class='{2}'></i>
+                        <i class='{2} icon-fw'></i>
                         <span id='selectedItemLabel_{0}' class='selected-names'>{1}</span>
                         <b class='fa fa-caret-down pull-right'></b>
                     </a>";
@@ -693,7 +693,7 @@ namespace Rock.Web.UI.Controls
         }
 
         /// <summary>
-        /// Gets the selected value as int.
+        /// Gets the selected value as an integer, returning NULL if the selected value is "0"
         /// </summary>
         /// <param name="noneAsNull">if set to <c>true</c> [none as null].</param>
         /// <returns></returns>

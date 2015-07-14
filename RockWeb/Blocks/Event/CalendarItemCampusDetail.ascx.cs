@@ -44,6 +44,7 @@ namespace RockWeb.Blocks.Event
     [Category( "Event" )]
     [Description( "Displays the details of a given calendar item at a campus." )]
 
+    [AccountField( "Default Account", "The default account to use for new registration instances", false, "2A6F9E5F-6859-44F1-AB0E-CE9CF6B08EE5", "", 0 )]
     public partial class CalendarItemCampusDetail : RockBlock, IDetailBlock
     {
         #region Properties
@@ -82,7 +83,6 @@ namespace RockWeb.Blocks.Event
             {
                 SchedulesState = JsonConvert.DeserializeObject<List<EventItemSchedule>>( json );
             }
-
         }
 
         /// <summary>
@@ -313,6 +313,54 @@ namespace RockWeb.Blocks.Event
 
         #region Control Events
 
+        /// <summary>
+        /// Handles the Click event of the lbCalendarDetail control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        protected void lbCalendarDetail_Click( object sender, EventArgs e )
+        {
+            using ( var rockContext = new RockContext() )
+            {
+                var eventItem = new EventCalendarItemService( rockContext )
+                    .Get( PageParameter( "EventItemId" ).AsInteger() );
+
+                if ( eventItem != null )
+                {
+                    var qryParams = new Dictionary<string, string>();
+                    qryParams.Add( "EventCalendarId", eventItem.EventCalendarId.ToString() );
+
+                    var pageCache = PageCache.Read( RockPage.PageId );
+                    if ( pageCache != null && pageCache.ParentPage != null && pageCache.ParentPage.ParentPage != null )
+                    {
+                        NavigateToPage( pageCache.ParentPage.ParentPage.Guid, qryParams );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the Click event of the lbCalendarItem control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        protected void lbCalendarItem_Click( object sender, EventArgs e )
+        {
+            using ( var rockContext = new RockContext() )
+            {
+                var eventItem = new EventCalendarItemService( rockContext )
+                    .Get( PageParameter( "EventItemId" ).AsInteger() );
+
+                if ( eventItem != null )
+                {
+                    var qryParams = new Dictionary<string, string>();
+                    qryParams.Add( "EventItemId", eventItem.Id.ToString() );
+                    qryParams.Add( "EventCalendarId", eventItem.EventCalendarId.ToString() );
+                    NavigateToParentPage( qryParams );
+                }
+            }
+        }
+
         #endregion
 
         #region Linkage Events
@@ -392,6 +440,7 @@ namespace RockWeb.Blocks.Event
                 if ( LinkageState.RegistrationInstance == null )
                 {
                     LinkageState.RegistrationInstance = new RegistrationInstance();
+                    LinkageState.RegistrationInstance.IsActive = true;
                 }
 
                 LinkageState.RegistrationInstance.RegistrationTemplateId = registrationTemplateId.Value;
@@ -757,14 +806,39 @@ namespace RockWeb.Blocks.Event
                             LinkageState.RegistrationInstance.RegistrationTemplateId == template.Id;
                     }
                 }
+
+                gpNewLinkageGroup.SetValue( LinkageState.Group );
+
+                rieNewLinkage.SetValue( LinkageState.RegistrationInstance );
+                rieNewLinkage.UrlSlug = LinkageState.UrlSlug;
+
+                if ( LinkageState.RegistrationInstance == null )
+                {
+                    var contactPersonId = ppContact.PersonId;
+                    if ( contactPersonId.HasValue )
+                    {
+                        var person = new PersonService( rockContext ).Get( contactPersonId.Value );
+                        if ( person != null )
+                        {
+                            rieNewLinkage.ContactName = person.FullName;
+                        }
+                    }
+                    if ( !string.IsNullOrWhiteSpace( tbEmail.Text ) )
+                    {
+                        rieNewLinkage.ContactEmail = tbEmail.Text;
+                    }
+
+                    Guid? accountGuid = GetAttributeValue( "DefaultAccount" ).AsGuidOrNull();
+                    if ( accountGuid.HasValue )
+                    {
+                        var account = new FinancialAccountService( rockContext ).Get( accountGuid.Value );
+                        rieNewLinkage.AccountId = account != null ? account.Id : 0;
+                    }
+
+                }
+
+                tbExistingLinkageUrlSlug.Text = LinkageState.UrlSlug;
             }
-
-            gpNewLinkageGroup.SetValue( LinkageState.Group );
-
-            rieNewLinkage.SetValue( LinkageState.RegistrationInstance );
-            rieNewLinkage.UrlSlug = LinkageState.UrlSlug;
-
-            tbExistingLinkageUrlSlug.Text = LinkageState.UrlSlug;
 
             ShowDialog( "EventItemNewLinkage", true );
         }
@@ -916,7 +990,6 @@ namespace RockWeb.Blocks.Event
         }
 
         #endregion
-
 
 }
 }

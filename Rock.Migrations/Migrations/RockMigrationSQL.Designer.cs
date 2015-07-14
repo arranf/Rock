@@ -263,7 +263,7 @@ namespace Rock.Migrations.Migrations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DECLARE @CategoryId int = (SELECT TOP 1 [Id] FROM [Category] WHERE [Guid] = &apos;16C89E26-6F56-4C94-9AB8-925789390F21&apos;)
+        ///   Looks up a localized string similar to DECLARE @CategoryId int = (SELECT TOP 1 [Id] FROM [Category] WHERE [Guid] = &apos;B31064D2-F2EF-43AA-8BEA-14DF257CBC59&apos;)
         ///        IF @CategoryId IS NOT NULL
         ///        BEGIN     
         ///            INSERT INTO [SystemEmail]
@@ -328,6 +328,42 @@ namespace Rock.Migrations.Migrations {
         public static string _201506281615197_GivingAnalyticsEmail_2 {
             get {
                 return ResourceManager.GetString("_201506281615197_GivingAnalyticsEmail_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @CategoryId int = (SELECT TOP 1 [Id] FROM [Category] WHERE [Guid] = &apos;B31064D2-F2EF-43AA-8BEA-14DF257CBC59&apos;)
+        ///        IF @CategoryId IS NOT NULL
+        ///        BEGIN     
+        ///            INSERT INTO [SystemEmail]
+        ///	        ([IsSystem], [Title], [Subject], [Body], [Guid], [CategoryId])
+        ///            VALUES
+        ///	            (0, &apos;Group Requirements Notification&apos;, &apos;Group Requirements Report | {{ &apos;&apos;Global&apos;&apos; | Attribute:&apos;&apos;OrganizationName&apos;&apos; }}&apos;, &apos;{{ &apos;&apos;Global&apos;&apos; | Attribute:&apos;&apos;EmailHeader&apos;&apos; }}
+        ///
+        ///&lt;p&gt;
+        ///    {{ Person.NickNa [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _201507062330051_GroupRequirementsNotificationEmail {
+            get {
+                return ResourceManager.GetString("_201507062330051_GroupRequirementsNotificationEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to     DECLARE @CategoryId int = ( SELECT TOP 1 [Id] FROM [Category] WHERE [Guid] = &apos;4A7D0D1F-E160-445E-9D29-AEBD140DA242&apos; )
+        ///    IF @CategoryId IS NOT NULL
+        ///    BEGIN     
+        ///
+        ///        INSERT INTO [SystemEmail] ([IsSystem], [Title], [Subject], [Body], [Guid], [CategoryId])
+        ///        VALUES
+        ///	        (0, &apos;Registration Notification&apos;, &apos;{{ RegistrationInstance.Name }} Registration&apos;, &apos;{{ &apos;&apos;Global&apos;&apos; | Attribute:&apos;&apos;EmailHeader&apos;&apos; }}
+        ///{% assign registrantCount = Registration.Registrants | Size %}
+        ///&lt;p&gt;
+        ///    The following { [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _201507121943445_RegistrationEmails {
+            get {
+                return ResourceManager.GetString("_201507121943445_RegistrationEmails", resourceCulture);
             }
         }
     }

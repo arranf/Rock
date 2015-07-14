@@ -44,13 +44,13 @@ namespace Rock.Client
         public string Comments { get; set; }
 
         /// <summary />
-        public int? ConnectionOpportunityId { get; set; }
+        public int ConnectionOpportunityId { get; set; }
 
         /// <summary />
         public int /* ConnectionState*/ ConnectionState { get; set; }
 
         /// <summary />
-        public int? ConnectionStatusId { get; set; }
+        public int ConnectionStatusId { get; set; }
 
         /// <summary />
         public int? ConnectorPersonAliasId { get; set; }
@@ -59,7 +59,7 @@ namespace Rock.Client
         public DateTime? FollowupDate { get; set; }
 
         /// <summary />
-        public int? PersonAliasId { get; set; }
+        public int PersonAliasId { get; set; }
 
         /// <summary />
         public Guid Guid { get; set; }
@@ -67,6 +67,26 @@ namespace Rock.Client
         /// <summary />
         public string ForeignId { get; set; }
 
+        /// <summary>
+        /// Copies the base properties from a source ConnectionRequest object
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public void CopyPropertiesFrom( ConnectionRequest source )
+        {
+            this.Id = source.Id;
+            this.AssignedGroupId = source.AssignedGroupId;
+            this.CampusId = source.CampusId;
+            this.Comments = source.Comments;
+            this.ConnectionOpportunityId = source.ConnectionOpportunityId;
+            this.ConnectionState = source.ConnectionState;
+            this.ConnectionStatusId = source.ConnectionStatusId;
+            this.ConnectorPersonAliasId = source.ConnectorPersonAliasId;
+            this.FollowupDate = source.FollowupDate;
+            this.PersonAliasId = source.PersonAliasId;
+            this.Guid = source.Guid;
+            this.ForeignId = source.ForeignId;
+
+        }
     }
 
     /// <summary>

@@ -54,6 +54,7 @@ namespace Rock.Model
         /// <value>
         /// The registration template fee identifier.
         /// </value>
+        [DataMember]
         public int RegistrationTemplateFeeId { get; set; }
 
         /// <summary>
@@ -64,6 +65,15 @@ namespace Rock.Model
         /// </value>
         [DataMember]
         public int Quantity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the option.
+        /// </summary>
+        /// <value>
+        /// The option.
+        /// </value>
+        [DataMember]
+        public string Option { get; set; }
 
         /// <summary>
         /// Gets or sets the cost.
@@ -92,6 +102,7 @@ namespace Rock.Model
         /// <value>
         /// The registration template fee.
         /// </value>
+        [LavaInclude]
         public virtual RegistrationTemplateFee RegistrationTemplateFee { get; set; }
 
         /// <summary>
@@ -101,6 +112,7 @@ namespace Rock.Model
         /// The total cost.
         /// </value>
         [NotMapped]
+        [LavaInclude]
         public virtual decimal TotalCost
         {
             get { return Quantity * Cost; }

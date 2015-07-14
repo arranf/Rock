@@ -35,16 +35,19 @@ namespace Rock.Client
         public int Id { get; set; }
 
         /// <summary />
-        public int? ConnectionActivityTypeId { get; set; }
+        public int ConnectionActivityTypeId { get; set; }
 
         /// <summary />
         public int? ConnectionOpportunityId { get; set; }
 
         /// <summary />
-        public int? ConnectionRequestId { get; set; }
+        public int ConnectionRequestId { get; set; }
 
         /// <summary />
         public int? ConnectorPersonAliasId { get; set; }
+
+        /// <summary />
+        public string Note { get; set; }
 
         /// <summary />
         public Guid Guid { get; set; }
@@ -52,6 +55,22 @@ namespace Rock.Client
         /// <summary />
         public string ForeignId { get; set; }
 
+        /// <summary>
+        /// Copies the base properties from a source ConnectionRequestActivity object
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public void CopyPropertiesFrom( ConnectionRequestActivity source )
+        {
+            this.Id = source.Id;
+            this.ConnectionActivityTypeId = source.ConnectionActivityTypeId;
+            this.ConnectionOpportunityId = source.ConnectionOpportunityId;
+            this.ConnectionRequestId = source.ConnectionRequestId;
+            this.ConnectorPersonAliasId = source.ConnectorPersonAliasId;
+            this.Note = source.Note;
+            this.Guid = source.Guid;
+            this.ForeignId = source.ForeignId;
+
+        }
     }
 
     /// <summary>

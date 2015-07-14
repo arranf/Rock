@@ -35,7 +35,7 @@ namespace Rock.Client
         public int Id { get; set; }
 
         /// <summary />
-        public int? ConnectionTypeId { get; set; }
+        public int ConnectionTypeId { get; set; }
 
         /// <summary />
         public int? ConnectorGroupId { get; set; }
@@ -50,7 +50,7 @@ namespace Rock.Client
         public int? GroupMemberStatusId { get; set; }
 
         /// <summary />
-        public int? GroupTypeId { get; set; }
+        public int GroupTypeId { get; set; }
 
         /// <summary />
         public string IconCssClass { get; set; }
@@ -76,6 +76,29 @@ namespace Rock.Client
         /// <summary />
         public string ForeignId { get; set; }
 
+        /// <summary>
+        /// Copies the base properties from a source ConnectionOpportunity object
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public void CopyPropertiesFrom( ConnectionOpportunity source )
+        {
+            this.Id = source.Id;
+            this.ConnectionTypeId = source.ConnectionTypeId;
+            this.ConnectorGroupId = source.ConnectorGroupId;
+            this.Description = source.Description;
+            this.GroupMemberRoleId = source.GroupMemberRoleId;
+            this.GroupMemberStatusId = source.GroupMemberStatusId;
+            this.GroupTypeId = source.GroupTypeId;
+            this.IconCssClass = source.IconCssClass;
+            this.IsActive = source.IsActive;
+            this.Name = source.Name;
+            this.PhotoId = source.PhotoId;
+            this.PublicName = source.PublicName;
+            this.UseAllGroupsOfType = source.UseAllGroupsOfType;
+            this.Guid = source.Guid;
+            this.ForeignId = source.ForeignId;
+
+        }
     }
 
     /// <summary>
@@ -105,10 +128,13 @@ namespace Rock.Client
         public GroupTypeRole GroupMemberRole { get; set; }
 
         /// <summary />
-        public int /* GroupMemberStatus*/ GroupMemberStatus { get; set; }
+        public Rock.Client.Enums.GroupMemberStatus GroupMemberStatus { get; set; }
 
         /// <summary />
         public GroupType GroupType { get; set; }
+
+        /// <summary />
+        public BinaryFile Photo { get; set; }
 
         /// <summary />
         public DateTime? CreatedDateTime { get; set; }

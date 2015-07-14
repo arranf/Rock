@@ -17,10 +17,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+
 using Rock;
+using Rock.Attribute;
 using Rock.Data;
 using Rock.Model;
 using Rock.Web.Cache;
@@ -29,21 +32,22 @@ using Rock.Workflow;
 namespace Rock.Web.UI.Controls
 {
     /// <summary>
-    /// Control used by WorkflowTypeDetail block to edit a workflow action type
+    /// Control used by RegistrationDetail block to edit a registration's registrant
     /// </summary>
     [ToolboxData( "<{0}:RegistrantEditor runat=server></{0}:RegistrantEditor>" )]
-    public class RegistrantEditor : PanelWidget, IHasValidationGroup
+    public class RegistrantEditor : CompositeControl, IHasValidationGroup
     {
+
+        #region Private Fields/Controls
+
+        private HiddenField _hfExpanded;
+        private HiddenFieldWithClass _hfTitle;
+
         private HighlightLabel _hlCost;
-
         private HiddenField _hfRegistrantGuid;
-
         private PersonPicker _ppRegistrant;
-
         private RockLiteral _lCost;
         private CurrencyBox _curCost;
-
-        private PlaceHolder _phRegistrantAttributes;
 
         private LinkButton _lbEditRegistrant;
         private LinkButton _lbDeleteRegistrant;
@@ -54,6 +58,77 @@ namespace Rock.Web.UI.Controls
         {
             get { return ViewState["EditMode"] as bool? ?? false; }
             set { ViewState["EditMode"] = value; }
+        }
+
+        #endregion
+
+        #region Properties
+        
+        /// <summary>
+        /// Gets or sets the forms.
+        /// </summary>
+        /// <value>
+        /// The forms.
+        /// </value>
+        private List<RegistrantEditorForm> Forms
+        {
+            get 
+            {
+                return ViewState["Forms"] as List<RegistrantEditorForm>;
+            }
+            set 
+            { 
+                ViewState["Forms"] = value;
+                RecreateChildControls();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        /// <value>
+        /// The title.
+        /// </value>
+        public string Title
+        {
+            get
+            {
+                EnsureChildControls();
+                return HttpUtility.HtmlDecode( _hfTitle.Value );
+            }
+            set
+            {
+                EnsureChildControls();
+                _hfTitle.Value = HttpUtility.HtmlEncode( value );
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="RegistrantEditor"/> is expanded.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if expanded; otherwise, <c>false</c>.
+        /// </value>
+        public bool Expanded
+        {
+            get
+            {
+                EnsureChildControls();
+
+                bool expanded = false;
+                if ( !bool.TryParse( _hfExpanded.Value, out expanded ) )
+                {
+                    expanded = false;
+                }
+
+                return expanded;
+            }
+
+            set
+            {
+                EnsureChildControls();
+                _hfExpanded.Value = value.ToString();
+            }
         }
 
         /// <summary>
@@ -170,31 +245,358 @@ namespace Rock.Web.UI.Controls
             }
         }
 
+        #endregion
+
+        #region Control Methods
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Web.UI.Control.Init" /> event.
+        /// </summary>
+        /// <param name="e">An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
+        protected override void OnInit( EventArgs e )
+        {
+            base.OnInit( e );
+
+            string script = @"
+// activity animation
+$('.rock-registrant-editor > header').click(function () {
+    $(this).siblings('.panel-body').slideToggle();
+
+    if ( $(this).find('.js-header-controls').length ) {
+        $(this).find('.js-header-title').slideToggle();
+        $(this).find('.js-header-controls').slideToggle();
+    }
+
+    $expanded = $(this).children('input.filter-expanded');
+    $expanded.val($expanded.val() == 'True' ? 'False' : 'True');
+
+    $('a.view-state > i', this).toggleClass('fa-chevron-down');
+    $('a.view-state > i', this).toggleClass('fa-chevron-up');
+});
+
+// fix so that certain controls will fire its event, but not the parent event 
+$('.js-stop-immediate-propagation').click(function (event) {
+    event.stopImmediatePropagation();
+});
+
+";
+            ScriptManager.RegisterStartupScript( this, typeof( RegistrantEditor ), "RegistrantEditor", script, true );
+        }
+
+        /// <summary>
+        /// Called by the ASP.NET page framework to notify server controls that use composition-based implementation to create any child controls they contain in preparation for posting back or rendering.
+        /// </summary>
+        protected override void CreateChildControls()
+        {
+            base.CreateChildControls();
+            Controls.Clear();
+
+            _hfExpanded = new HiddenField();
+            _hfExpanded.ID = "_hfExpanded";
+            _hfExpanded.Value = "False";
+            Controls.Add( _hfExpanded );
+
+            _hfTitle = new HiddenFieldWithClass();
+            _hfTitle.ValidateRequestMode = System.Web.UI.ValidateRequestMode.Disabled;
+            _hfTitle.ID = "_hfTitle";
+            _hfTitle.CssClass = "js-header-title-hidden";
+            Controls.Add( _hfTitle );
+
+            _hfRegistrantGuid = new HiddenField();
+            _hfRegistrantGuid.ID = this.ID + "_hfRegistrantGuid";
+            Controls.Add( _hfRegistrantGuid );
+
+            _hlCost = new HighlightLabel();
+            _hlCost.ID = this.ID + "_hlCost";
+            _hlCost.LabelType = LabelType.Info;
+            Controls.Add( _hlCost );
+
+            _ppRegistrant = new PersonPicker();
+            _ppRegistrant.ID = this.ID + "_ppRegistrant";
+            _ppRegistrant.Label = "Person";
+            _ppRegistrant.Required = true;
+            _ppRegistrant.SelectPerson += _ppRegistrant_SelectPerson;
+            Controls.Add( _ppRegistrant );
+
+            _lCost = new RockLiteral();
+            _lCost.ID = this.ID + "_lCost";
+            _lCost.Label = "Cost";
+            Controls.Add( _lCost );
+
+            _curCost = new CurrencyBox();
+            _curCost.ID = this.ID + "_curCost";
+            _curCost.Label = "Cost";
+            Controls.Add( _curCost );
+
+            _lbEditRegistrant = new LinkButton();
+            _lbEditRegistrant.CausesValidation = false;
+            _lbEditRegistrant.ID = this.ID + "_lbEditRegistrant";
+            _lbEditRegistrant.Text = "Edit";
+            _lbEditRegistrant.CssClass = "btn btn-primary js-action-edit";
+            _lbEditRegistrant.Click += lbEditRegistrant_Click;
+            Controls.Add( _lbEditRegistrant );
+
+            _lbDeleteRegistrant = new LinkButton();
+            _lbDeleteRegistrant.CausesValidation = false;
+            _lbDeleteRegistrant.ID = this.ID + "_lbDeleteRegistrant";
+            _lbDeleteRegistrant.Text = "Delete";
+            _lbDeleteRegistrant.CssClass = "btn btn-link js-action-delete";
+            _lbDeleteRegistrant.Click += lbDeleteRegistrant_Click;
+            Controls.Add( _lbDeleteRegistrant );
+
+            _lbSaveRegistrant = new LinkButton();
+            _lbSaveRegistrant.CausesValidation = true;
+            _lbSaveRegistrant.ID = this.ID + "_lbSaveRegistrant";
+            _lbSaveRegistrant.Text = "Save";
+            _lbSaveRegistrant.CssClass = "btn btn-primary js-action-save";
+            _lbSaveRegistrant.Click += lbSaveRegistrant_Click;
+            Controls.Add( _lbSaveRegistrant );
+
+            _lbCancelRegistrant = new LinkButton();
+            _lbCancelRegistrant.CausesValidation = false;
+            _lbCancelRegistrant.ID = this.ID + "_lbCancelRegistrant";
+            _lbCancelRegistrant.Text = "Cancel";
+            _lbCancelRegistrant.CssClass = "btn btn-link js-action-cancel";
+            _lbCancelRegistrant.Click += lbCancelRegistrant_Click;
+            Controls.Add( _lbCancelRegistrant );
+
+            if ( Forms != null )
+            {
+                foreach ( var form in Forms )
+                {
+                    form.Controls.Clear();
+
+                    foreach ( var field in form.Fields )
+                    {
+                        if ( field.FieldSource == RegistrationFieldSource.PersonField )
+                        {
+                            var rlField = new RockLiteral();
+                            rlField.ID = this.ID + "_rl" + field.PersonFieldType.ConvertToString( false );
+                            rlField.Label = field.PersonFieldType.ConvertToString( true );
+                            Controls.Add( rlField );
+                            form.Controls.Add( rlField );
+                        }
+                        else
+                        {
+                            if ( field.AttributeId.HasValue )
+                            {
+                                var attribute = AttributeCache.Read( field.AttributeId.Value );
+                                if ( attribute != null )
+                                {
+                                    if ( field.FieldSource == RegistrationFieldSource.RegistrationAttribute )
+                                    {
+                                        var control = attribute.AddControl( Controls, string.Empty, this.ValidationGroup, false, true, field.IsRequired );
+                                        form.Controls.Add( control );
+                                    }
+                                    else
+                                    {
+                                        var rlField = new RockLiteral();
+                                        rlField.ID = this.ID + "_rl" + attribute.Id.ToString();
+                                        rlField.Label = attribute.Name;
+                                        Controls.Add( rlField );
+                                        form.Controls.Add( rlField );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Outputs server control content to a provided <see cref="T:System.Web.UI.HtmlTextWriter" /> object and stores tracing information about the control if tracing is enabled.
+        /// </summary>
+        /// <param name="writer">The <see cref="T:System.Web.UI.HtmlTextWriter" /> object that receives the control content.</param>
+        public override void RenderControl( HtmlTextWriter writer )
+        {
+            if ( this.Visible )
+            {
+                // Section
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel panel-widget rock-registrant-editor " + CssClass );
+                writer.AddAttribute( HtmlTextWriterAttribute.Id, this.ClientID );
+                writer.RenderBeginTag( "section" );
+
+                // Header
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel-heading clearfix" );
+                writer.RenderBeginTag( "header" );
+
+                // Hidden Field to track expansion
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "filter-expanded" );
+                _hfExpanded.RenderControl( writer );
+
+                /* Begin - Title and header controls */
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "pull-left" );
+                writer.RenderBeginTag( HtmlTextWriterTag.Div );
+
+                // Hidden Field to track Title
+                _hfTitle.RenderControl( writer );
+
+                // Title
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "js-header-title" );
+                writer.RenderBeginTag( HtmlTextWriterTag.Div );
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "fa fa-person" );
+                writer.RenderBeginTag( HtmlTextWriterTag.I );
+                writer.RenderEndTag();
+                writer.Write( " " );
+                writer.Write( Title );
+                writer.RenderEndTag();  
+
+                writer.RenderEndTag();  // pull-left
+
+                // Panel Controls
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "pull-right" );
+                writer.RenderBeginTag( HtmlTextWriterTag.Div );
+
+                _hlCost.RenderControl( writer );
+
+                // Chevron up/down Button
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "btn btn-link btn-xs view-state" );
+                writer.RenderBeginTag( HtmlTextWriterTag.A );
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, Expanded ? "fa fa-chevron-up" : "fa fa-chevron-down" );
+                writer.RenderBeginTag( HtmlTextWriterTag.I );
+                writer.RenderEndTag();
+                writer.RenderEndTag();
+
+                writer.RenderEndTag(); // pull-right
+
+                writer.RenderEndTag(); // Header                
+
+                // Body
+                writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel-body" );
+                if ( !Expanded )
+                {
+                    writer.AddStyleAttribute( HtmlTextWriterStyle.Display, "none" );
+                }
+                writer.RenderBeginTag( HtmlTextWriterTag.Div );
+
+                RenderRegistrant( writer );
+
+                writer.RenderEndTag();
+
+                writer.RenderEndTag();  // Section
+            }
+        }
+
+        /// <summary>
+        /// Renders the registrant.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        private void RenderRegistrant ( HtmlTextWriter writer )
+        {
+            _hfRegistrantGuid.RenderControl( writer );
+
+            if ( EditMode )
+            {
+                _ppRegistrant.RenderControl( writer );
+                _curCost.RenderControl( writer );
+            }
+            else
+            {
+                _lCost.Text = Cost.ToString( "C2" );
+                _lCost.RenderControl( writer );
+            }
+
+            if ( Forms != null )
+            {
+                foreach ( var form in Forms )
+                {
+                    RenderForms( form, writer );
+                }
+            }
+
+            writer.AddAttribute( HtmlTextWriterAttribute.Class, "actions" );
+            writer.RenderBeginTag( HtmlTextWriterTag.Div );
+
+            _lbEditRegistrant.Visible = !EditMode;
+            _lbEditRegistrant.RenderControl( writer );
+
+            _lbDeleteRegistrant.Visible = !EditMode;
+            _lbDeleteRegistrant.RenderControl( writer );
+
+            _lbSaveRegistrant.Visible = EditMode;
+            _lbSaveRegistrant.RenderControl( writer );
+
+            _lbCancelRegistrant.Visible = EditMode;
+            _lbCancelRegistrant.RenderControl( writer );
+
+            writer.RenderEndTag();
+        }
+
+        private void RenderForms( RegistrantEditorForm form,  HtmlTextWriter writer )
+        {
+            // panel
+            writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel panel-block" );
+            writer.RenderBeginTag( HtmlTextWriterTag.Div );
+
+            // Header
+            writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel-heading clearfix" );
+            writer.RenderBeginTag( HtmlTextWriterTag.Div );
+            writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel-title pull-left" );
+            writer.RenderBeginTag( HtmlTextWriterTag.H1 );
+            writer.Write( form.Name );
+            writer.RenderEndTag();  // H1.panel-title
+            writer.RenderEndTag();  // Div.panel-heading
+
+            writer.AddAttribute( HtmlTextWriterAttribute.Class, "panel-body" );
+            writer.RenderBeginTag( HtmlTextWriterTag.H1 );
+
+            foreach( var control in form.Controls)
+            {
+                control.RenderControl( writer );
+            }
+
+            writer.RenderEndTag();  // Div.panel-body
+
+            writer.RenderEndTag();  // Div.panel-block
+        }
+
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Gets the type of the workflow action.
         /// </summary>
         /// <returns></returns>
-        public RegistrationRegistrant GetRegistrant()
+        public void SetRegistrantFromControl( RegistrationRegistrant registrant )
         {
             EnsureChildControls();
 
-            RegistrationRegistrant result = new RegistrationRegistrant();
-            result.Guid = new Guid( _hfRegistrantGuid.Value );
-            result.PersonAliasId = _ppRegistrant.PersonAliasId;;
-            result.Cost = _curCost.Text.AsDecimal();
+            if ( registrant != null )
+            {
+                registrant.Cost = _curCost.Text.AsDecimal();
 
-            result.LoadAttributes();
+                if ( Forms != null && registrant.PersonAlias != null && registrant.PersonAlias.Person != null )
+                {
+                    // Get registrant attribute field values
+                    if ( registrant.Attributes == null )
+                    {
+                        registrant.LoadAttributes();
+                    }
 
-            Rock.Attribute.Helper.GetEditValues( _phRegistrantAttributes, result );
+                    foreach ( var field in Forms
+                        .SelectMany( f => f.Fields
+                            .Where( a => a.FieldSource == RegistrationFieldSource.RegistrationAttribute ) ) )
+                    {
+                        var attribute = AttributeCache.Read( field.AttributeId.Value );
+                        var control = FindControl( string.Format( "attribute_field_{0}", attribute.Id ) );
+                        if ( attribute != null && control != null )
+                        {
+                            registrant.SetAttributeValue( attribute.Key, attribute.FieldType.Field.GetEditValue( control, attribute.QualifierValues ) );
+                        }
+                    }
+                }
 
-            return result;
+            }
+
         }
 
         /// <summary>
         /// Sets the type of the workflow action.
         /// </summary>
         /// <param name="value">The value.</param>
-        public void SetRegistrant(RegistrationRegistrant value )
+        public void SetControlFromRegistrant( RegistrationRegistrant value, RockContext rockContext )
         {
             EnsureChildControls();
 
@@ -216,9 +618,183 @@ namespace Rock.Web.UI.Controls
                 }
 
                 _curCost.Text = value.Cost.ToString();
-                _phRegistrantAttributes.Controls.Clear();
-                Rock.Attribute.Helper.AddEditControls( value, _phRegistrantAttributes, true, ValidationGroup );
+
+                Person person = null;
+                if ( value.PersonAlias != null )
+                {
+                    person = value.PersonAlias.Person;
+                }
+
+                if ( Forms != null && person != null )
+                {
+                    // Set the values of the person field controls
+                    foreach ( var field in Forms
+                        .SelectMany( f => f.Fields
+                            .Where( a => a.FieldSource == RegistrationFieldSource.PersonField ) ) )
+                    {
+                        var literalControl = FindControl( this.ID + "_rl" + field.PersonFieldType.ConvertToString( false ) ) as RockLiteral;
+
+                        if ( literalControl != null )
+                        {
+                            literalControl.Text = string.Empty;
+
+                            DefinedValueCache dvPhone = null;
+
+                            switch ( field.PersonFieldType )
+                            {
+                                case RegistrationPersonFieldType.FirstName: literalControl.Text = person.NickName; break;
+                                case RegistrationPersonFieldType.LastName: literalControl.Text = person.LastName; break;
+                                case RegistrationPersonFieldType.Campus:
+                                    {
+                                        if ( person != null )
+                                        {
+                                            var family = person.GetFamilies( rockContext ).FirstOrDefault();
+                                            if ( family != null && family.Campus != null )
+                                            {
+                                                literalControl.Text = family.Campus.Name;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                case RegistrationPersonFieldType.Address:
+                                    {
+                                        var location = person.GetHomeLocation( rockContext );
+                                        if ( location != null )
+                                        {
+                                            literalControl.Text = location.ToStringSafe();
+                                        }
+                                        break;
+                                    }
+                                case RegistrationPersonFieldType.Email: literalControl.Text = person.Email; break;
+                                case RegistrationPersonFieldType.Birthdate: literalControl.Text = person.BirthDate.HasValue ? person.BirthDate.Value.ToShortDateString() : string.Empty; break;
+                                case RegistrationPersonFieldType.Gender: literalControl.Text = person.Gender.ConvertToString(); break;
+                                case RegistrationPersonFieldType.MaritalStatus: literalControl.Text = person.MaritalStatusValue != null ? person.MaritalStatusValue.Value : string.Empty; break;
+                                case RegistrationPersonFieldType.MobilePhone:
+                                    {
+                                        dvPhone = DefinedValueCache.Read( Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_MOBILE );
+                                        break;
+                                    }
+                                case RegistrationPersonFieldType.HomePhone:
+                                    {
+                                        dvPhone = DefinedValueCache.Read( Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_HOME );
+                                        break;
+                                    }
+                                case RegistrationPersonFieldType.WorkPhone:
+                                    {
+                                        dvPhone = DefinedValueCache.Read( Rock.SystemGuid.DefinedValue.PERSON_PHONE_TYPE_WORK );
+                                        break;
+                                    }
+                            }
+
+                            if ( dvPhone != null )
+                            {
+                                var phoneNumber = new PersonService( rockContext ).GetPhoneNumber( person, dvPhone );
+                                if ( phoneNumber != null )
+                                {
+                                    literalControl.Text = phoneNumber.NumberFormatted;
+                                }
+                            }
+                        }
+                    }
+
+                    // Set the values of the person attribute controls
+                    var personAttributeFields = Forms
+                        .SelectMany( f => f.Fields
+                        .Where( a =>
+                            a.FieldSource == RegistrationFieldSource.PersonAttribute &&
+                            a.AttributeId.HasValue ) );
+                    {
+                        if ( personAttributeFields.Any() )
+                        {
+                            if ( person.Attributes == null )
+                            {
+                                person.LoadAttributes( rockContext );
+                            }
+
+                            foreach ( var field in personAttributeFields )
+                            {
+                                var attribute = AttributeCache.Read( field.AttributeId.Value );
+                                var literalControl = FindControl( this.ID + "_rl" + field.AttributeId.Value.ToString() ) as RockLiteral;
+                                if ( attribute != null && literalControl != null )
+                                {
+                                    literalControl.Text = attribute.FieldType.Field.FormatValueAsHtml( null, person.GetAttributeValue( attribute.Key ), attribute.QualifierValues );
+                                }
+                            }
+                        }
+                    }
+
+                    // Set the values of the person attribute controls
+                    var groupMemberAttributeFields = Forms
+                        .SelectMany( f => f.Fields
+                        .Where( a =>
+                            a.FieldSource == RegistrationFieldSource.GroupMemberAttribute &&
+                            a.AttributeId.HasValue ) );
+                    {
+                        if ( groupMemberAttributeFields.Any() && value.GroupMember != null )
+                        {
+                            if ( value.GroupMember.Attributes == null )
+                            {
+                                value.GroupMember.LoadAttributes( rockContext );
+                            }
+
+                            foreach ( var field in groupMemberAttributeFields )
+                            {
+                                var attribute = AttributeCache.Read( field.AttributeId.Value );
+                                var literalControl = FindControl( this.ID + "_rl" + field.AttributeId.Value.ToString() ) as RockLiteral;
+                                if ( attribute != null && literalControl != null )
+                                {
+                                    literalControl.Text = attribute.FieldType.Field.FormatValueAsHtml( null, value.GroupMember.GetAttributeValue( attribute.Key ), attribute.QualifierValues );
+                                }
+                            }
+                        }
+                    }
+
+                    // Set the values of the person attribute controls
+                    var registrantAttributeFields = Forms
+                        .SelectMany( f => f.Fields
+                        .Where( a =>
+                            a.FieldSource == RegistrationFieldSource.RegistrationAttribute &&
+                            a.AttributeId.HasValue ) );
+                    {
+                        if ( registrantAttributeFields.Any() )
+                        {
+                            if ( value.Attributes == null )
+                            {
+                                value.LoadAttributes();
+                            }
+
+                            foreach ( var field in registrantAttributeFields )
+                            {
+                                var attribute = AttributeCache.Read( field.AttributeId.Value );
+                                var control = FindControl( string.Format( "attribute_field_{0}", attribute.Id ) );
+                                if ( attribute != null && control != null )
+                                {
+                                    attribute.FieldType.Field.SetEditValue( control, attribute.QualifierValues, value.GroupMember.GetAttributeValue( attribute.Key ) );
+                                }
+                            }
+                        }
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Sets the forms.
+        /// </summary>
+        /// <param name="template">The template.</param>
+        public void SetForms( RegistrationTemplate template )
+        {
+            var forms = new List<RegistrantEditorForm>();
+            
+            if ( template != null && template.Forms != null && template.Forms.Any() )
+            {
+                foreach ( var form in template.Forms )
+                {
+                    forms.Add( new RegistrantEditorForm( form ) );
+                }
+            }
+
+            this.Forms = forms;
         }
 
         /// <summary>
@@ -237,121 +813,9 @@ namespace Rock.Web.UI.Controls
             EditMode = false;
         }
 
-        /// <summary>
-        /// Called by the ASP.NET page framework to notify server controls that use composition-based implementation to create any child controls they contain in preparation for posting back or rendering.
-        /// </summary>
-        protected override void CreateChildControls()
-        {
-            base.CreateChildControls();
+        #endregion
 
-            _hfRegistrantGuid = new HiddenField();
-            Controls.Add( _hfRegistrantGuid );
-            _hfRegistrantGuid.ID = this.ID + "_hfRegistrantGuid";
-
-            _hlCost = new HighlightLabel();
-            Controls.Add( _hlCost );
-            _hlCost.ID = this.ID + "_hlCost";
-            _hlCost.LabelType = LabelType.Success;
-
-            _ppRegistrant = new PersonPicker();
-            Controls.Add( _ppRegistrant );
-            _ppRegistrant.ID = this.ID + "_ppRegistrant";
-            _ppRegistrant.Label = "Person";
-            _ppRegistrant.Required = true;
-            _ppRegistrant.SelectPerson += _ppRegistrant_SelectPerson;
-
-            _lCost = new RockLiteral();
-            Controls.Add( _lCost );
-            _lCost.ID = this.ID + "_lCost";
-            _lCost.Label = "Cost";
-
-            _curCost = new CurrencyBox();
-            Controls.Add( _curCost );
-            _curCost.ID = this.ID + "_curCost";
-            _curCost.Label = "Cost";
-
-            _phRegistrantAttributes = new PlaceHolder();
-            Controls.Add( _phRegistrantAttributes );
-            _phRegistrantAttributes.ID = this.ID + "_phActionAttributes";
-
-            _lbEditRegistrant = new LinkButton();
-            Controls.Add( _lbEditRegistrant );
-            _lbEditRegistrant.CausesValidation = false;
-            _lbEditRegistrant.ID = this.ID + "_lbEditRegistrant";
-            _lbEditRegistrant.Text = "Edit";
-            _lbEditRegistrant.CssClass = "btn btn-primary js-action-edit";
-            _lbEditRegistrant.Click += lbEditRegistrant_Click;
-
-            _lbDeleteRegistrant = new LinkButton();
-            Controls.Add( _lbDeleteRegistrant );
-            _lbDeleteRegistrant.CausesValidation = false;
-            _lbDeleteRegistrant.ID = this.ID + "_lbDeleteRegistrant";
-            _lbDeleteRegistrant.Text = "Delete";
-            _lbDeleteRegistrant.CssClass = "btn btn-link js-action-delete";
-            _lbDeleteRegistrant.Click += lbDeleteRegistrant_Click;
-
-            _lbSaveRegistrant = new LinkButton();
-            Controls.Add( _lbSaveRegistrant );
-            _lbSaveRegistrant.CausesValidation = true;
-            _lbSaveRegistrant.ID = this.ID + "_lbSaveRegistrant";
-            _lbSaveRegistrant.Text = "Save";
-            _lbSaveRegistrant.CssClass = "btn btn-primary js-action-save";
-            _lbSaveRegistrant.Click += lbSaveRegistrant_Click;
-
-            _lbCancelRegistrant = new LinkButton();
-            Controls.Add( _lbCancelRegistrant );
-            _lbCancelRegistrant.CausesValidation = false;
-            _lbCancelRegistrant.ID = this.ID + "_lbCancelRegistrant";
-            _lbCancelRegistrant.Text = "Cancel";
-            _lbCancelRegistrant.CssClass = "btn btn-link js-action-cancel";
-            _lbCancelRegistrant.Click += lbCancelRegistrant_Click;
-        }
-
-        /// <summary>
-        /// Writes the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> content to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object, for display on the client.
-        /// </summary>
-        /// <param name="writer">An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
-        protected override void RenderChildControls( HtmlTextWriter writer )
-        {
-            _hfRegistrantGuid.RenderControl( writer );
-
-            if ( EditMode )
-            {
-                _ppRegistrant.RenderControl( writer );
-                _curCost.RenderControl( writer );
-            }
-            else
-            {
-                _lCost.Text = Cost.ToString( "C2" );
-                _lCost.RenderControl( writer );
-            }
-
-            writer.AddAttribute( HtmlTextWriterAttribute.Class, "actions" );
-            writer.RenderBeginTag( HtmlTextWriterTag.Div );
-
-            _lbEditRegistrant.Visible = !EditMode;
-            _lbEditRegistrant.RenderControl( writer );
-
-            _lbDeleteRegistrant.Visible = !EditMode;
-            _lbDeleteRegistrant.RenderControl( writer );
-
-            _lbSaveRegistrant.Visible = EditMode;
-            _lbSaveRegistrant.RenderControl( writer );
-
-            _lbCancelRegistrant.Visible = EditMode;
-            _lbCancelRegistrant.RenderControl( writer );
-
-            writer.RenderEndTag();
-        }
-
-        /// <summary>
-        /// Renders the labels.
-        /// </summary>
-        /// <param name="writer">The writer.</param>
-        protected override void RenderLabels( HtmlTextWriter writer )
-        {
-            _hlCost.RenderControl( writer );
-        }
+        #region Events
 
         /// <summary>
         /// Handles the SelectPerson event of the _ppRegistrant control.
@@ -443,5 +907,134 @@ namespace Rock.Web.UI.Controls
         /// </summary>
         public event EventHandler CancelRegistrantClick;
 
+        #endregion
+
     }
+
+    #region Helper Classes
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable]
+    public class RegistrantEditorForm
+    {
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order.
+        /// </summary>
+        /// <value>
+        /// The order.
+        /// </value>
+        public int Order { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fields.
+        /// </summary>
+        /// <value>
+        /// The fields.
+        /// </value>
+        public List<RegistrantEditorFormField> Fields { get; set; }
+
+        public List<Control> Controls { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistrantEditorForm"/> class.
+        /// </summary>
+        public RegistrantEditorForm()
+        {
+            Fields = new List<RegistrantEditorFormField>();
+            Controls = new List<Control>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistrantEditorForm"/> class.
+        /// </summary>
+        /// <param name="form">The form.</param>
+        public RegistrantEditorForm( RegistrationTemplateForm form ) : this()
+        {
+            Name = form.Name;
+            Order = form.Order;
+            form.Fields.ToList()
+                .ForEach( f => Fields.Add( new RegistrantEditorFormField( f ) ) );
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [Serializable]
+    public class RegistrantEditorFormField
+    {
+        /// <summary>
+        /// Gets or sets the field source.
+        /// </summary>
+        /// <value>
+        /// The field source.
+        /// </value>
+        public RegistrationFieldSource FieldSource { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the person field.
+        /// </summary>
+        /// <value>
+        /// The type of the person field.
+        /// </value>
+        public RegistrationPersonFieldType PersonFieldType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the attribute identifier.
+        /// </summary>
+        /// <value>
+        /// The attribute identifier.
+        /// </value>
+        public int? AttributeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order.
+        /// </summary>
+        /// <value>
+        /// The order.
+        /// </value>
+        public int Order { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is required.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is required; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsRequired { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistrantEditorFormField"/> class.
+        /// </summary>
+        public RegistrantEditorFormField()
+        {
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegistrantEditorFormField"/> class.
+        /// </summary>
+        /// <param name="field">The field.</param>
+        public RegistrantEditorFormField( RegistrationTemplateFormField field ) : this()
+        {
+            FieldSource = field.FieldSource;
+            PersonFieldType = field.PersonFieldType;
+            AttributeId = field.AttributeId;
+            Order = field.Order;
+            IsRequired = field.IsRequired;
+        }
+    }
+
+    #endregion
+
 }

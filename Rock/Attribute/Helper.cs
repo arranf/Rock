@@ -372,6 +372,24 @@ namespace Rock.Attribute
 
                 }
 
+                // Check for registration template type attributes
+                int? registrationTemplateId = null;
+                if ( entity is RegistrationRegistrant )
+                {
+                    RegistrationInstance registrationInstance = null;
+                    var registration = ( (RegistrationRegistrant)entity ).Registration ?? new RegistrationService( rockContext )
+                        .Queryable().AsNoTracking().FirstOrDefault( r => r.Id == ( (RegistrationRegistrant)entity ).RegistrationId );
+                    if ( registration != null )
+                    {
+                        registrationInstance = registration.RegistrationInstance ?? new RegistrationInstanceService( rockContext )
+                            .Queryable().AsNoTracking().FirstOrDefault( r => r.Id == registration.RegistrationInstanceId );
+                        if ( registrationInstance != null )
+                        {
+                            registrationTemplateId = registrationInstance.RegistrationTemplateId;
+                        }
+                    }
+                }
+
                 foreach ( PropertyInfo propertyInfo in entityType.GetProperties() )
                     properties.Add( propertyInfo.Name.ToLower(), propertyInfo );
 
@@ -410,6 +428,17 @@ namespace Rock.Attribute
                                 {
                                     inheritedAttributes[groupTypeIdValue].Add( Rock.Web.Cache.AttributeCache.Read( attributeId ) );
                                 }
+                            }
+                        }
+
+                        // Registrant attribute ( by RegistrationTemplateId )
+                        else if ( entity is RegistrationRegistrant && 
+                            registrationTemplateId.HasValue &&
+                            entityAttributes.EntityTypeQualifierValue.AsInteger() == registrationTemplateId.Value )
+                        {
+                            foreach ( int attributeId in entityAttributes.AttributeIds )
+                            {
+                                attributes.Add( Rock.Web.Cache.AttributeCache.Read( attributeId ) );
                             }
                         }
 
@@ -491,7 +520,7 @@ namespace Rock.Attribute
                 }
 
                 entity.Attributes = new Dictionary<string, Web.Cache.AttributeCache>();
-                allAttributes.ForEach( a => entity.Attributes.Add( a.Key, a ) );
+                allAttributes.ForEach( a => entity.Attributes.AddOrIgnore( a.Key, a ) );
 
                 entity.AttributeValues = attributeValues;
             }
@@ -916,7 +945,16 @@ namespace Rock.Attribute
         /// <param name="exclude">The exclude.</param>
         public static void AddEditControls( string category, List<string> attributeKeys, IHasAttributes item, Control parentControl, string validationGroup, bool setValue, List<string> exclude )
         {
-            HtmlGenericControl fieldSet = new HtmlGenericControl( "fieldset" );
+            HtmlGenericControl fieldSet;
+            if ( parentControl is DynamicControlsPanel )
+            {
+                fieldSet = new DynamicControlsHtmlGenericControl( "fieldset" );
+            }
+            else
+            {
+                fieldSet = new HtmlGenericControl( "fieldset" );
+            }
+
             parentControl.Controls.Add( fieldSet );
             fieldSet.Controls.Clear();
 

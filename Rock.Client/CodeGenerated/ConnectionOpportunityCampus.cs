@@ -35,10 +35,10 @@ namespace Rock.Client
         public int Id { get; set; }
 
         /// <summary />
-        public int? CampusId { get; set; }
+        public int CampusId { get; set; }
 
         /// <summary />
-        public int? ConnectionOpportunityId { get; set; }
+        public int ConnectionOpportunityId { get; set; }
 
         /// <summary />
         public int? ConnectorGroupId { get; set; }
@@ -49,6 +49,20 @@ namespace Rock.Client
         /// <summary />
         public string ForeignId { get; set; }
 
+        /// <summary>
+        /// Copies the base properties from a source ConnectionOpportunityCampus object
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public void CopyPropertiesFrom( ConnectionOpportunityCampus source )
+        {
+            this.Id = source.Id;
+            this.CampusId = source.CampusId;
+            this.ConnectionOpportunityId = source.ConnectionOpportunityId;
+            this.ConnectorGroupId = source.ConnectorGroupId;
+            this.Guid = source.Guid;
+            this.ForeignId = source.ForeignId;
+
+        }
     }
 
     /// <summary>
