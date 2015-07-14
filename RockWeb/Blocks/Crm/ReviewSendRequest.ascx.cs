@@ -290,23 +290,12 @@ namespace RockWeb.Blocks.Crm
         {
             PersonService personService = new PersonService(new RockContext());
 
-            var reviewRequestGroup = Rock.SystemGuid.Group.GROUP_REVIEW_REQUEST.AsGuid();
             var adultrole = Rock.SystemGuid.GroupRole.GROUPROLE_FAMILY_MEMBER_ADULT.AsGuid();
-
-
             var familyGroupType = GroupTypeCache.GetFamilyGroupType();
 
             var selectedConnectionStatuses = cblConnectionStatus.SelectedValuesAsInt;
             var reviewUpdatedDate = RockDateTime.Now.AddMonths(-nbUpdatedLessThan.Text.AsInteger());
             var people = personService.Queryable("Members", false, false);
-
-            // people opted out (or pending)
-            var peopleOptedOut = personService.Queryable("Members", false, false)
-                .Where
-                (
-                     p => p.Members.Where(gm => gm.Group.Guid == reviewRequestGroup
-                        && ( gm.GroupMemberStatus == GroupMemberStatus.Inactive || gm.GroupMemberStatus == GroupMemberStatus.Pending )).Any()
-                );
 
             // people without email addresses
             var peopleNoEmail = personService.Queryable("Members", false, false)
@@ -314,10 +303,7 @@ namespace RockWeb.Blocks.Crm
                 (
                     p => p.Email == null || p.Email.Trim() == string.Empty
                 );
-            foreach (var person in peopleNoEmail)
-            {
-                person.Review = 2;
-            }
+
             // people who match the Connection Status critera
             people = people.Where(p => cblConnectionStatus.SelectedValuesAsInt.Contains(p.ConnectionStatusValueId ?? -1));
 
@@ -326,12 +312,9 @@ namespace RockWeb.Blocks.Crm
                 && gm.GroupRole.Guid == adultrole).Any());
 
             // review is null or review is older than our criteria
-            people = people.Where(p => p.Review == null || p.Review <= reviewUpdatedDate);
+            people = people.Where( p => p.ReviewedDateTime == null || p.ReviewedDateTime <= reviewUpdatedDate );
 
-            // except people who are in the review-opt-out group as inactive.
-            people = people.Except(peopleOptedOut);
-
-            // people who have no email addresses
+            // except people who have no email addresses
             people = people.Except(peopleNoEmail);
             return people;
         }
