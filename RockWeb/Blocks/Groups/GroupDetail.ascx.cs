@@ -550,7 +550,6 @@ namespace RockWeb.Blocks.Groups
             group.IsSecurityRole = cbIsSecurityRole.Checked;
             group.IsActive = cbIsActive.Checked;
             group.IsPublic = cbIsPublic.Checked;
-            group.AcceptAlternatePlacements = cbAcceptAlternatePlacements.Checked;
             group.MustMeetRequirementsToAddMember = cbMembersMustMeetRequirementsOnAdd.Checked;
 
             // save sync settings
@@ -1089,7 +1088,6 @@ namespace RockWeb.Blocks.Groups
             cbIsSecurityRole.Checked = group.IsSecurityRole;
             cbIsActive.Checked = group.IsActive;
             cbIsPublic.Checked = group.IsPublic;
-            cbAcceptAlternatePlacements.Checked = group.AcceptAlternatePlacements;
 
             var rockContext = new RockContext();
 
@@ -1103,6 +1101,7 @@ namespace RockWeb.Blocks.Groups
             // hide sync and requirements panel if no admin access
             wpGroupSync.Visible = group.IsAuthorized( Authorization.ADMINISTRATE, CurrentPerson );
             wpGroupRequirements.Visible = group.IsAuthorized( Authorization.ADMINISTRATE, CurrentPerson );
+            wpGroupMemberAttributes.Visible = group.IsAuthorized( Authorization.ADMINISTRATE, CurrentPerson );
 
             var systemEmails = new SystemEmailService( new RockContext() ).Queryable().OrderBy( e => e.Title );
 
@@ -1253,16 +1252,6 @@ namespace RockWeb.Blocks.Groups
                 {
                     wpMeetingDetails.Visible = pnlSchedule.Visible;
                     gLocations.Visible = false;
-                }
-
-                // only show the Accept Alternate Placements option if the current user has Admin access (and the GroupType allows it)
-                if ( groupType != null && groupType.EnableAlternatePlacements )
-                {
-                    cbAcceptAlternatePlacements.Visible = this.IsUserAuthorized( Rock.Security.Authorization.ADMINISTRATE );
-                }
-                else
-                {
-                    cbAcceptAlternatePlacements.Visible = false;
                 }
 
                 gLocations.Columns[2].Visible = groupType != null && ( groupType.EnableLocationSchedules ?? false );

@@ -39,6 +39,7 @@ namespace RockWeb.Blocks.Groups
     [GroupField( "Group", "Either pick a specific group or choose <none> to have group be determined by the groupId page parameter" )]
     [LinkedPage( "Detail Page" )]
     [LinkedPage( "Person Profile Page", "Page used for viewing a person's profile. If set a view profile button will show for each group member.", false, "", "", 2, "PersonProfilePage" )]
+    [BooleanField( "Require Note on Alternate Placement", "Flag that indicates whether a note is required to save the alternate placement.", false, "", 3, "RequireAlternatePlacementNote")]
     public partial class GroupMemberList : RockBlock, ISecondaryBlock
     {
         #region Private Variables
@@ -482,7 +483,7 @@ namespace RockWeb.Blocks.Groups
                 }
             }
 
-            if ( _group.GroupType != null && _group.GroupType.EnableAlternatePlacements )
+            if ( _group != null && _group.GroupType != null && false )//TODO_group.GroupType.EnableAlternatePlacements )
             {
                 AddAlternatePlacementColumn();
             }
@@ -540,33 +541,14 @@ namespace RockWeb.Blocks.Groups
         protected void btnAlternatePlacement_Click( object sender, RowEventArgs e )
         {
             var rockContext = new RockContext();
-
-            Group targetGroup = null;
-            if ( _group != null )
-            {
-                var groupService = new GroupService( rockContext );
-                var ancestorGroupIdList = groupService.GetAllAncestorIds( _group.Id );
-
-                // get first ancestor Group that accepts Alternate Placements. 
-                // If we get all the way to the top without finding one, use the top group, even if it doesn't accept alternate placements
-                foreach ( var ancestorGroupId in ancestorGroupIdList )
-                {
-                    targetGroup = groupService.Get( ancestorGroupId );
-                    if ( targetGroup.AcceptAlternatePlacements )
-                    {
-                        break;
-                    }
-                }
-            }
-
+           
+            // TODO
             var groupMemberPerson = new GroupMemberService( rockContext ).GetPerson( e.RowKeyId );
-            if ( groupMemberPerson != null && targetGroup != null )
+            if ( groupMemberPerson != null )
             {
                 nbAlternatePlacementWarning.Text = string.Empty;
-                hfAlternatePlacementTargetGroupId.Value = targetGroup.Id.ToString();
                 hfAlternatePlacementGroupMemberId.Value = e.RowKeyId.ToString();
                 lAlternatePlacementGroupMemberName.Text = groupMemberPerson.ToString();
-                lAlternatePlacementTargetGroupName.Text = targetGroup.ToString();
                 mdAlternatePlacement.Visible = true;
                 mdAlternatePlacement.Show();
             }
@@ -579,47 +561,57 @@ namespace RockWeb.Blocks.Groups
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected void mdAlternatePlacement_SaveClick( object sender, EventArgs e )
         {
-            // TODO
-            var rockContext = new RockContext();
-            var groupService = new GroupService( rockContext );
-            var groupMemberService = new GroupMemberService( rockContext );
-            var targetGroup = groupService.Get( hfAlternatePlacementTargetGroupId.Value.AsInteger() );
-            var groupMember = groupMemberService.Get( hfAlternatePlacementGroupMemberId.Value.AsInteger() );
-            if ( targetGroup != null && groupMember != null )
+            if ( GetAttributeValue("RequireAlternatePlacementNote").AsBoolean() && string.IsNullOrWhiteSpace( tbAlternatePlacementNote.Text ) )
             {
-                //// delete from the old groupmember record and create a new groupmember record for the targetgroup
-                //// NOTE: we'll delete and add vs. just change the groupMember.GroupId to avoid having anything attached 
-                //// to the groupmember record thaat doesn't make sense in the new group
-
-                string errorMessage;
-                if ( !groupMemberService.CanDelete( groupMember, out errorMessage ) )
-                {
-                    nbAlternatePlacementWarning.Text = errorMessage;
-                    return;
-                }
-
-                var groupTypeCache = GroupTypeCache.Read( targetGroup.GroupTypeId );
-                if ( !groupTypeCache.DefaultGroupRoleId.HasValue )
-                {
-                    nbAlternatePlacementWarning.Text = "Target group does not have a default role";
-                    return;
-                }
-
-                var placedGroupMember = new GroupMember();
-                placedGroupMember.GroupId = targetGroup.Id;
-                placedGroupMember.GroupRoleId = groupTypeCache.DefaultGroupRoleId.Value;
-                placedGroupMember.PersonId = groupMember.PersonId;
-                placedGroupMember.GroupMemberStatus = GroupMemberStatus.Pending;
-                placedGroupMember.Note = tbAlternatePlacementNote.Text;
-
-                groupMemberService.Delete( groupMember );
-                groupMemberService.Add( placedGroupMember );
-                rockContext.SaveChanges();
+                nbAlternatePlacementWarning.Text = "You must provide a note.";
+                return;
             }
 
-            mdAlternatePlacement.Hide();
-            mdAlternatePlacement.Visible = false;
-            BindGroupMembersGrid();
+            // TODO
+            /*
+            using ( var rockContext = new RockContext() )
+            {
+                var groupService = new GroupService( rockContext );
+                var groupMemberService = new GroupMemberService( rockContext );
+                var targetGroup = groupService.Get( hfAlternatePlacementTargetGroupId.Value.AsInteger() );
+                var groupMember = groupMemberService.Get( hfAlternatePlacementGroupMemberId.Value.AsInteger() );
+                if ( targetGroup != null && groupMember != null )
+                {
+                    //// delete from the old groupmember record and create a new groupmember record for the targetgroup
+                    //// NOTE: we'll delete and add vs. just change the groupMember.GroupId to avoid having anything attached 
+                    //// to the groupmember record thaat doesn't make sense in the new group
+
+                    string errorMessage;
+                    if ( !groupMemberService.CanDelete( groupMember, out errorMessage ) )
+                    {
+                        nbAlternatePlacementWarning.Text = errorMessage;
+                        return;
+                    }
+
+                    var groupTypeCache = GroupTypeCache.Read( targetGroup.GroupTypeId );
+                    if ( !groupTypeCache.DefaultGroupRoleId.HasValue )
+                    {
+                        nbAlternatePlacementWarning.Text = "Target group does not have a default role";
+                        return;
+                    }
+
+                    var placedGroupMember = new GroupMember();
+                    placedGroupMember.GroupId = targetGroup.Id;
+                    placedGroupMember.GroupRoleId = groupTypeCache.DefaultGroupRoleId.Value;
+                    placedGroupMember.PersonId = groupMember.PersonId;
+                    placedGroupMember.GroupMemberStatus = GroupMemberStatus.Pending;
+                    placedGroupMember.Note = string.Format( "{0} - {1}, {2}", tbAlternatePlacementNote.Text, CurrentPerson.FullName, groupMember.Group.Name );
+
+                    groupMemberService.Delete( groupMember );
+                    groupMemberService.Add( placedGroupMember );
+                    rockContext.SaveChanges();
+                }
+
+                mdAlternatePlacement.Hide();
+                mdAlternatePlacement.Visible = false;
+                BindGroupMembersGrid();
+            }
+             * */
         }
 
         /// <summary>

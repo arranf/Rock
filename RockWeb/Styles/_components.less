@@ -425,7 +425,7 @@ ul.rocktree ul {
 
     li {
       border-radius: @border-radius-base;
-      border: 1px solid #bbb;
+      border: 1px solid @pagelist-border-color;
       float: left;
       margin: 0 1.25% @spacing-md-px;
       width: 47.5%;
@@ -442,9 +442,19 @@ ul.rocktree ul {
         padding: @spacing-md-px;
         border-radius: @border-radius-base;
 
+        i {
+            font-size: 26px;
+            color: lighten(@pagelist-text-color, 10%);
+        }
+
         &:hover {
-          background-color: @accent-bold-color;
-          color: @accent-bold-text-color;
+          background-color: @pagelist-rollover-bg;
+          color: @pagelist-rollover-text-color;
+          border-color: @pagelist-rollover-border-color;
+
+          i {
+            color: @pagelist-rollover-text-color;
+          }
         }
 
         div.notification {
@@ -471,12 +481,39 @@ ul.rocktree ul {
   }
 }
 
-@media (min-width: @screen-sm-min) { // tablet portrait and larger
+@media @sm-only { // tablet portrait and larger
   .list-as-blocks {
     ul {
       li {
-        margin: 0 2.5% @spacing-md-px;
-        width: 20%;
+        margin: 0 1% @spacing-md-px;
+        width: 32%;
+
+        &:nth-child(3n) {
+            margin-right: 0;
+        }
+
+        &:nth-child(3n+1) {
+            margin-left: 0;
+        }
+      }
+    }
+  }
+}
+
+@media @md { // tablet portrait and larger
+  .list-as-blocks {
+    ul {
+      li {
+        margin: 0 1% @spacing-md-px;
+        width: 18.4%;
+
+        &:nth-child(5n) {
+            margin-right: 0;
+        }
+
+        &:nth-child(5n+1) {
+            margin-left: 0;
+        }
       }
     }
   }
@@ -794,6 +831,7 @@ div.tagsinput
   border-radius: @border-radius-base;
   padding: 2px 6px;
   position: relative;
+  color: @accent-semibold-color;
 
   &:focus {
     border-color: #595959;
@@ -839,6 +877,7 @@ div.tagsinput
     min-width: 290px;
     margin-left: -6px;
     border: 0;
+    margin-top: 2px;
   }
 
   input.searchinput {
@@ -1650,7 +1689,7 @@ ul.rocklist {
     border-radius: @border-radius-base;
 
     &:hover {
-      background-color: darken(@accent-light-color, 5%);
+      background-color: @autocomplete-rollover-bg;
     }
   }
 }
@@ -1949,9 +1988,9 @@ ul.list-group-panel, .panel-collapse {
     text-align: center;
     padding-top: 8px;
     opacity: .4;
-    color: @link-color;
+    color: @text-color;
     transition: 1s;
-    border-left: 1px solid lighten(@link-color, 20%);
+    border-left: 1px solid @header-bg;
 
     &:before {
         font-family: FontAwesome;
@@ -1960,7 +1999,7 @@ ul.list-group-panel, .panel-collapse {
 
     &.following {
         opacity: 1;
-        background-color: @link-color;
+        background-color: @accent-semibold-color;
         color: #fff;
 
         &:before {

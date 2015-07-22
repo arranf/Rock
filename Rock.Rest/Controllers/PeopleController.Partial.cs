@@ -265,7 +265,7 @@ namespace Rock.Rest.Controllers
         [HttpGet]
         [System.Web.Http.Route( "api/People/Search" )]
         [Obsolete( "use api/People/Search?name=... instead" )]
-        public IQueryable<PersonSearchResultBase> Search( string name )
+        public IQueryable<PersonSearchResult> Search( string name )
         {
             return Search( name, false, false );
         }
@@ -280,7 +280,7 @@ namespace Rock.Rest.Controllers
         [HttpGet]
         [System.Web.Http.Route( "api/People/Search/{name}/{includeHtml}" )]
         [Obsolete( "use api/People/Search?name=... instead" )]
-        public IQueryable<PersonSearchResultBase> Search( string name, bool includeHtml )
+        public IQueryable<PersonSearchResult> Search( string name, bool includeHtml )
         {
             return Search( name, includeHtml, false );
         }
@@ -296,7 +296,7 @@ namespace Rock.Rest.Controllers
         [HttpGet]
         [System.Web.Http.Route( "api/People/Search/{name}/{includeHtml}/{includeBusinesses}" )]
         [Obsolete( "use api/People/Search?name=... instead" )]
-        public IQueryable<PersonSearchResultBase> Search( string name, bool includeHtml, bool includeBusinesses )
+        public IQueryable<PersonSearchResult> Search( string name, bool includeHtml, bool includeBusinesses )
         {
             return this.Search( name, includeHtml, true, includeBusinesses, false );
         }
@@ -313,7 +313,7 @@ namespace Rock.Rest.Controllers
         [Authenticate, Secured]
         [HttpGet]
         [System.Web.Http.Route( "api/People/Search" )]
-        public IQueryable<PersonSearchResultBase> Search( string name, bool includeHtml, bool includeDetails, bool includeBusinesses = false, bool includeDeceased = false )
+        public IQueryable<PersonSearchResult> Search( string name, bool includeHtml, bool includeDetails, bool includeBusinesses = false, bool includeDeceased = false )
         {
             int count = 20;
             bool showFullNameReversed;
@@ -334,7 +334,7 @@ namespace Rock.Rest.Controllers
             if ( includeDetails == false )
             {
                 var simpleResultQry = sortedPersonQry.Select( a => new { a.Id, a.FirstName, a.NickName, a.LastName, a.SuffixValueId, a.RecordTypeValueId, a.RecordStatusValueId } );
-                var simpleResult = simpleResultQry.ToList().Select( a => new PersonSearchResultBase
+                var simpleResult = simpleResultQry.ToList().Select( a => new PersonSearchResult
                 {
                     Id = a.Id,
                     Name = showFullNameReversed
@@ -556,6 +556,25 @@ namespace Rock.Rest.Controllers
             personSearchResult.PickerItemDetailsHtml = string.Format( itemDetailFormat, imageHtml, personInfoHtml );
         }
 
+        [Authenticate, Secured]
+        [HttpGet]
+        [System.Web.Http.Route( "api/People/GetSearchDetails/{personId}" )]
+        public string GetImpersonationParameter( int personId )
+        {
+            string result = string.Empty;
+            
+            var rockContext = this.Service.Context as Rock.Data.RockContext;
+
+            var person = new PersonService( rockContext ).Get( personId );
+
+            if ( person != null )
+            {
+                result = person.ImpersonationParameter;
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Gets the popup html for the selected person
         /// </summary>
@@ -639,9 +658,9 @@ namespace Rock.Rest.Controllers
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public class PersonSearchResultBase
+    public class PersonSearchResult
     {
         /// <summary>
         /// Gets or sets the id.
@@ -666,13 +685,7 @@ namespace Rock.Rest.Controllers
         ///   <c>true</c> if this instance is active; otherwise, <c>false</c>.
         /// </value>
         public bool IsActive { get; set; }
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    public class PersonSearchResult : PersonSearchResultBase
-    {
+        
         /// <summary>
         /// Gets or sets the image HTML tag.
         /// </summary>

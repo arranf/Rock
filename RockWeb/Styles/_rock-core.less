@@ -113,6 +113,10 @@ a.help {
     color: @help-color;
 }
 
+.help-message {
+    font-weight: normal;
+}
+
 .photo {
     img {
         width: 100%;
@@ -153,12 +157,8 @@ a.help {
     }
 }
 
-.nav-pills {
-    //margin: 10px 0; -- commented out JME 2/10/2014 to see impact
-}
-
 .control-label {
-    font-weight: @font-weight-semibold;
+    font-weight: @font-weight-bold;
 }
 
 // add badge colors back to BS3
@@ -226,7 +226,7 @@ a.help {
 }
 
 
-// panel extensions    ->      .panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;) {}
+// .panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;) {}
 .panel {
     legend {
         border-color: @accent-color;
@@ -254,6 +254,10 @@ a.help {
         .form-group {
             margin-bottom: 0;
         }
+
+        i.fa {
+            color: lighten(@text-color, 10%);
+        }
     }
 
     .panel-body {
@@ -262,9 +266,12 @@ a.help {
 }
 
 .panel-widget {
-    .panel-variant(@accent-color ; @accent-text-color; @accent-color; @accent-color;);
+    // .panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;) {}
+    .panel-variant(@panel-default-border; @text-color; @panel-default-heading-bg; darken(@panel-default-heading-bg, 5%););
 
     .panel-heading {
+        border: 0;
+
         .checkbox {
             display: inline;
             margin-top: 0;
@@ -296,7 +303,8 @@ a.help {
 }
 
 .panel-persondetails {
-    .panel-variant(darken(@gray-lighter, 5%); @text-color; @gray-lighter; darken(@gray-lighter, 5%););
+    // panel extensions    ->      .panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;) {}
+    .panel-variant(@panel-default-border; @text-color; @panel-default-heading-bg; darken(@panel-default-heading-bg, 5%););
 
     .panel-heading {
         .actions {
@@ -337,12 +345,11 @@ a.help {
 
 .panel-block {
     //.panel-variant(@border; @heading-text-color; @heading-bg-color; @heading-border;)
-    .panel-variant(darken(@gray-lighter, 5%); @text-color; @gray-lighter; darken(@gray-lighter, 5%););
+    .panel-variant(@panel-default-border; @text-color; @panel-default-heading-bg; darken(@panel-default-heading-bg, 2%););
 
     border-top-color: @panel-top-border-color;
 
     > .panel-heading {
-        background-color: @gray-lighter;
         .clearfix();
 
         .panel-title {
@@ -352,6 +359,10 @@ a.help {
                 color: #6a6a6a;
             }
         }
+    }
+
+    .list-group-item {
+        background-color: transparent;
     }
 
     .panel-body {
@@ -410,8 +421,6 @@ a.help {
         margin-bottom: 15px;
     }
 }
-
-// .panel-note {}  see _block-specific.less
 
 // extensions for buttons    ->   .button-variant(@color; @background; @border) {}
 
@@ -589,6 +598,11 @@ h6.condensed {
 }
 
 // add 10 column row
+.col-md-2-10 {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
 @media (min-width: 992px) {
     .col-md-2-10 {
         width: 20%;

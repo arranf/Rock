@@ -315,6 +315,26 @@
     <Compile Include="Migrations\201507132121233_RegistrationReminder.Designer.cs">
       <DependentUpon>201507132121233_RegistrationReminder.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201507171137229_RegistrationInstanceContactPhone.cs" />
+    <Compile Include="Migrations\201507171137229_RegistrationInstanceContactPhone.Designer.cs">
+      <DependentUpon>201507171137229_RegistrationInstanceContactPhone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507181918494_ConnectionChangesAndSampleData.cs" />
+    <Compile Include="Migrations\201507181918494_ConnectionChangesAndSampleData.Designer.cs">
+      <DependentUpon>201507181918494_ConnectionChangesAndSampleData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507200334416_RegistrationNavigationWizard.cs" />
+    <Compile Include="Migrations\201507200334416_RegistrationNavigationWizard.Designer.cs">
+      <DependentUpon>201507200334416_RegistrationNavigationWizard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507201757258_MyDashboard.cs" />
+    <Compile Include="Migrations\201507201757258_MyDashboard.Designer.cs">
+      <DependentUpon>201507201757258_MyDashboard.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201507212236398_BatchNote.cs" />
+    <Compile Include="Migrations\201507212236398_BatchNote.Designer.cs">
+      <DependentUpon>201507212236398_BatchNote.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\RockMigrationSQL.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1964,6 +1984,21 @@
     <EmbeddedResource Include="Migrations\201507132121233_RegistrationReminder.resx">
       <DependentUpon>201507132121233_RegistrationReminder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507171137229_RegistrationInstanceContactPhone.resx">
+      <DependentUpon>201507171137229_RegistrationInstanceContactPhone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507181918494_ConnectionChangesAndSampleData.resx">
+      <DependentUpon>201507181918494_ConnectionChangesAndSampleData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507200334416_RegistrationNavigationWizard.resx">
+      <DependentUpon>201507200334416_RegistrationNavigationWizard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507201757258_MyDashboard.resx">
+      <DependentUpon>201507201757258_MyDashboard.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201507212236398_BatchNote.resx">
+      <DependentUpon>201507212236398_BatchNote.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Migrations\Version 3.0\Version 1.3.0\201503091713044_FixBirthDateCol.resx">
       <DependentUpon>201503091713044_FixBirthDateCol.cs</DependentUpon>
     </EmbeddedResource>
@@ -3056,7 +3091,10 @@
     <Content Include="Migrations\201506162223455_EnsurePersonAlias_UpdateCheckinLabels.sql" />
     <Content Include="Migrations\201506170003272_UpdateCalendarBlocks.sql" />
     <Content Include="Migrations\201506242325188_GeoSpatialIndexes_AddSystemEmail.sql" />
+    <Content Include="Migrations\201507081827047_SampleCalendarEvents.sql" />
     <Content Include="Migrations\201507062330051_GroupRequirementsNotificationEmail.sql" />
+    <Content Include="Migrations\201507181918494_ConnectionChangesAndSampleData.sql" />
+    <Content Include="Migrations\201507171137229_RegistrationInstanceContactPhone.sql" />
     <Content Include="Migrations\201507121943445_RegistrationEmails.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

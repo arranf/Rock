@@ -338,7 +338,8 @@ namespace RockWeb.Blocks.Event
                     eventItem.ApprovedByPersonAlias = null;
                     eventItem.ApprovedOnDateTime = null;
                 }
-                eventItem.Description = tbDescription.Text;
+                eventItem.Description = htmlDescription.Text;
+                eventItem.Summary = tbSummary.Text;
                 eventItem.DetailsUrl = tbDetailUrl.Text;
 
                 int? orphanedImageId = null;
@@ -457,6 +458,21 @@ namespace RockWeb.Blocks.Event
         #endregion Edit Events
 
         #region Control Events
+
+        /// <summary>
+        /// Handles the Click event of the lbCalendarsDetail control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        protected void lbCalendarsDetail_Click( object sender, EventArgs e )
+        {
+            var qryParams = new Dictionary<string, string>();
+            var pageCache = PageCache.Read( RockPage.PageId );
+            if ( pageCache != null && pageCache.ParentPage != null && pageCache.ParentPage.ParentPage != null )
+            {
+                NavigateToPage( pageCache.ParentPage.ParentPage.Guid, qryParams );
+            }
+        }
 
         /// <summary>
         /// Handles the Click event of the lbCalendarDetail control.
@@ -578,6 +594,10 @@ namespace RockWeb.Blocks.Event
                 eventItem = new EventItem { Id = 0, IsActive = true, Name = "" };
             }
 
+            var calendar = new EventCalendarService( rockContext ).Get( _calendarId );
+            lWizardCalendarName.Text = calendar != null ? calendar.Name : "Calendar";
+            lWizardCalendarItemName.Text = string.IsNullOrWhiteSpace( eventItem.Name ) ? "New Calendar Item" : eventItem.Name;
+
             eventItem.LoadAttributes( rockContext );
 
             bool readOnly = false;
@@ -660,7 +680,8 @@ namespace RockWeb.Blocks.Event
                     eventItem.ApprovedByPersonAlias.Person.FullName );
             }
 
-            tbDescription.Text = eventItem.Description;
+            htmlDescription.Text = eventItem.Description;
+            tbSummary.Text = eventItem.Summary;
             imgupPhoto.BinaryFileId = eventItem.PhotoId;
             tbDetailUrl.Text = eventItem.DetailsUrl;
 
@@ -703,7 +724,7 @@ namespace RockWeb.Blocks.Event
                 divImage.Visible = false;
             }
 
-            lDescription.Text = eventItem.Description;
+            lSummary.Text = eventItem.Summary;
             lCalendar.Text = eventItem.EventCalendarItems
                 .Select( c => c.EventCalendar.Name ).ToList().AsDelimited( ", " );
             lAudiences.Text = eventItem.EventItemAudiences

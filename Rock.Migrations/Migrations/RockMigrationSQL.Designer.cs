@@ -350,6 +350,20 @@ namespace Rock.Migrations.Migrations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to INSERT [dbo].[EventCalendar] ( [Name], [Description], [IconCssClass], [IsActive],  [Guid], [ForeignId]) 
+        ///    VALUES ( N&apos;Internal&apos;, N&apos;A calendar for church staff and staff-like users.&apos;, N&apos;fa fa-lock&apos;, 1, N&apos;8c7f7f4e-1c51-41d3-9ac3-02b3f4054798&apos;, NULL)
+        ///DECLARE @InternalCalendarId int = SCOPE_IDENTITY()
+        ///
+        ///DECLARE @PublicCalendarId int = (SELECT TOP 1 [Id] FROM [EventCalendar] WHERE [Guid] = &apos;8A444668-19AF-4417-9C74-09F842572974&apos;)
+        ///DECLARE @CarPhotoId int = (SELECT TOP 1 [Id] FROM [BinaryFile] WHERE [Guid] =  [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _201507081827047_SampleCalendarEvents {
+            get {
+                return ResourceManager.GetString("_201507081827047_SampleCalendarEvents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to     DECLARE @CategoryId int = ( SELECT TOP 1 [Id] FROM [Category] WHERE [Guid] = &apos;4A7D0D1F-E160-445E-9D29-AEBD140DA242&apos; )
         ///    IF @CategoryId IS NOT NULL
         ///    BEGIN     
@@ -364,6 +378,47 @@ namespace Rock.Migrations.Migrations {
         public static string _201507121943445_RegistrationEmails {
             get {
                 return ResourceManager.GetString("_201507121943445_RegistrationEmails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @PageId int = ( SELECT TOP 1 [Id] FROM [Page] WHERE [Guid] = &apos;F7CA6E0F-C319-47AB-9A6D-247C5716D846&apos; )
+        ///DELETE [PageRoute] WHERE [PageId] = @PageId
+        ///
+        ///UPDATE [Page] SET [BreadCrumbDisplayName] = 0 
+        ///WHERE [GUID] = &apos;F7CA6E0F-C319-47AB-9A6D-247C5716D846&apos;
+        ///
+        ///UPDATE [Page] SET 
+        ///    [InternalName] = &apos;Registration&apos;,
+        ///    [PageTitle] = &apos;Registration&apos;,
+        ///    [BrowserTitle] = &apos;Registration&apos;,
+        ///    [BreadCrumbDisplayName] = 1
+        ///WHERE [GUID] = &apos;FC81099A-2F98-4EBA-AC5A-8300B2FE46C4&apos;
+        ///
+        ///DECLARE @TemplateEntityTypeI [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _201507171137229_RegistrationInstanceContactPhone {
+            get {
+                return ResourceManager.GetString("_201507171137229_RegistrationInstanceContactPhone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to --Existing Variables
+        ///DECLARE @Date DATETIME = GETDATE()
+        ///
+        ///DECLARE @PersonAliasId int = ( SELECT TOP 1 [Id] FROM [PersonAlias] ORDER BY [Id] )
+        ///
+        ///DECLARE @CampusId int = ( SELECT TOP 1 [Id] FROM [Campus] ORDER BY [Id] )
+        ///
+        ///DECLARE @ConnectionAdministrationGroupId int = ( SELECT TOP 1 [Id] FROM [Group] WHERE [Guid] = N&apos;060971D2-EAF9-4C0D-B6F6-F01725CAA5AC&apos;)
+        ///
+        ///DECLARE @ServingTeamGroupTypeId int = ( SELECT TOP 1 [Id] FROM [GroupType] WHERE [Guid] = N&apos;2C42B2D4-1C5F-4AD5-A9AD-08631B872AC4&apos;)
+        ///DECLARE @GeneralG [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string _201507181918494_ConnectionChangesAndSampleData {
+            get {
+                return ResourceManager.GetString("_201507181918494_ConnectionChangesAndSampleData", resourceCulture);
             }
         }
     }

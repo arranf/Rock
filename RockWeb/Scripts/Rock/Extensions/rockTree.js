@@ -305,14 +305,14 @@
 				    }
 
 				    if (node.hasChildren) {
-				        $li.prepend('<i class="rocktree-icon ' + folderCssClass + '"></i>');
+				        $li.prepend('<i class="rocktree-icon icon-fw ' + folderCssClass + '"></i>');
 
 				        if (node.iconCssClass) {
-				            $li.find('.rocktree-name').prepend('<i class="' + node.iconCssClass + '"></i>');
+				            $li.find('.rocktree-name').prepend('<i class="icon-fw ' + node.iconCssClass + '"></i>');
 				        }
 				    } else {
 				        if (leafCssClass) {
-				            $li.find('.rocktree-name').prepend('<i class="' + leafCssClass + '"></i>');
+				            $li.find('.rocktree-name').prepend('<i class="icon-fw ' + leafCssClass + '"></i>');
 				        }
 				    }
 
