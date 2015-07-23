@@ -54,7 +54,7 @@ namespace Rock.Field.Types
             else
             {
                 var phoneService = new PhoneNumberService( new RockContext() ).Queryable()
-                    .Where( p => p.Number == value )
+                    .Where( p => p.Guid == value.AsGuid() )
                     .FirstOrDefault();
 
                 if ( (phoneService == null) )
@@ -82,7 +82,45 @@ namespace Rock.Field.Types
         /// </returns>
         public override Control EditControl( Dictionary<string, ConfigurationValue> configurationValues, string id )
         {
-            return new PhoneNumberBox { ID = id }; 
+            var phoneNumberBox = new PhoneNumberBox { ID = id };
+            return phoneNumberBox; 
+        }
+
+        /// <summary>
+        /// Reads new values entered by the user for the field
+        /// returns Campus.Guid as string
+        /// </summary>
+        /// <param name="control">Parent control that controls were added to in the CreateEditControl() method</param>
+        /// <param name="configurationValues">The configuration values.</param>
+        /// <returns></returns>
+        public override string GetEditValue( System.Web.UI.Control control, Dictionary<string, ConfigurationValue> configurationValues )
+        {
+            PhoneNumberBox phoneNumberBox = control as PhoneNumberBox;
+
+            if ( phoneNumberBox != null )
+            {
+                string number = PhoneNumber.CleanNumber( phoneNumberBox.Number );
+                string countryCode = PhoneNumber.CleanNumber( phoneNumberBox.CountryCode );
+                if ( !String.IsNullOrWhiteSpace( number ) )
+                {
+                    var phoneNumber = new PhoneNumberService( new RockContext() ).Queryable()
+                        .Where( p => p.Number == number && p.CountryCode == countryCode).FirstOrDefault();
+                    if (phoneNumber == null)
+                    {
+                        var newPhoneNumber = new PhoneNumber();
+                        newPhoneNumber.Number = number;
+                        newPhoneNumber.CountryCode = countryCode;
+                        return newPhoneNumber.Guid.ToString();
+                    }
+                    else
+                    {
+                        return phoneNumber.Guid.ToString();
+                    }
+                    
+                }
+            }
+
+            return string.Empty;
         }
 
         /// <summary>
