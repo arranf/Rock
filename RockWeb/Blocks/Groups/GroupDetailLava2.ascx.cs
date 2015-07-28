@@ -45,8 +45,10 @@ namespace RockWeb.Blocks.Groups
     [LinkedPage( "Group Member Add Page", "Page to use for adding a new group member. If no page is provided the built in group member edit panel will be used. This panel allows the individual to search the database.", false, "", "", 1 )]
     [LinkedPage( "Roster Page", "The page to link to to view the roster.", true, "", "", 2 )]
     [LinkedPage( "Attendance Page", "The page to link to to manage the group's attendance.", true, "", "", 3 )]
-    [LinkedPage( "Communication Page", "The communication page to use for sending emails to the group members.", true, "", "", 4 )]
-    [LinkedPage("Communication Page2", "The communication page to use for sending emails to the group members.", true, "", "", 5)]
+    [LinkedPage( "Email Page 1", "The communication page to use for sending emails to the group members.", true, "", "", 4 )]
+    [LinkedPage("Email Page 2", "The communication page to use for sending emails to the group members.", true, "", "", 5)]
+    [LinkedPage( "Text Page 1", "The communication page to use for sending texts to the group members.", true, "", "", 5 )]
+    [LinkedPage( "Text Page 2", "The communication page to use for sending texts to the group members.", true, "", "", 5 )]
     [CodeEditorField( "Lava Template", "The lava template to use to format the group details.", CodeEditorMode.Liquid, CodeEditorTheme.Rock, 400, true, "{% include '~~/Assets/Lava/GroupDetail.lava' %}", "", 6 )]
     [BooleanField("Enable Location Edit", "Enables changing locations when editing a group.", false, "", 7)]
     [BooleanField( "Enable Debug", "Shows the fields available to merge in lava.", false, "", 8 )]
@@ -484,6 +486,14 @@ namespace RockWeb.Blocks.Groups
                         case "SendCommunication2":
                             SendCommunication2();
                             break;
+
+                        case "SendText1":
+                            SendText1();
+                            break;
+
+                        case "SendText2":
+                            SendText2();
+                            break;
                     }
                 }
             }
@@ -541,7 +551,7 @@ namespace RockWeb.Blocks.Groups
                 linkedPages.Add( "PersonDetailPage", LinkedPageUrl( "PersonDetailPage", null ) );
                 linkedPages.Add( "RosterPage", LinkedPageUrl( "RosterPage", null ) );
                 linkedPages.Add( "AttendancePage", LinkedPageUrl( "AttendancePage", null ) );
-                linkedPages.Add( "CommunicationPage", LinkedPageUrl( "CommunicationPage", null ) );
+                linkedPages.Add( "EmailPage1", LinkedPageUrl( "EmailPage1", null ) );
                 mergeFields.Add( "LinkedPages", linkedPages );
 
                 // add collection of allowed security actions
@@ -574,6 +584,8 @@ namespace RockWeb.Blocks.Groups
                                                     <li><strong>DeleteGroupMember:</strong> Deletes a group member. Expects a group member id. <code>{{ member.Id | Postback:'DeleteGroupMember' }}</code></li>
                                                     <li><strong>SendCommunication:</strong> Sends a communication to all group members on behalf of the Current User. This will redirect them to the communication page where they can author their email. <code>{{ '' | Postback:'SendCommunication' }}</code></li>
                                                     <li><strong>SendCommunication:</strong> Sends a communication to all group members on behalf of the Current User. This will redirect them to the communication page where they can author their email. <code>{{ '' | Postback:'SendCommunication2' }}</code></li>
+                                                    <li><strong>SendCommunication:</strong> Sends a text to all group members on behalf of the Current User. This will redirect them to the communication page where they can author their email. <code>{{ '' | Postback:'SendText1' }}</code></li>
+                                                    <li><strong>SendCommunication:</strong> Sends a text to all group members on behalf of the Current User. This will redirect them to the communication page where they can author their email. <code>{{ '' | Postback:'SendText2' }}</code></li>
                                                 </ul>";
 
                     lDebug.Visible = true;
@@ -903,7 +915,7 @@ namespace RockWeb.Blocks.Groups
         private void SendCommunication()
         {
             // create communication
-            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace( GetAttributeValue( "CommunicationPage" ) ) )
+            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace( GetAttributeValue( "EmailPage1" ) ) )
             {
                 var rockContext = new RockContext();
                 var service = new Rock.Model.CommunicationService( rockContext );
@@ -933,14 +945,14 @@ namespace RockWeb.Blocks.Groups
                 Dictionary<string, string> queryParameters = new Dictionary<string, string>();
                 queryParameters.Add( "CommunicationId", communication.Id.ToString() );
 
-                NavigateToLinkedPage( "CommunicationPage", queryParameters );
+                NavigateToLinkedPage( "EmailPage1", queryParameters );
             }
         }
 
         private void SendCommunication2( )
         {
             // create communication
-            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace(GetAttributeValue("CommunicationPage2")) )
+            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace(GetAttributeValue("EmailPage2")) )
             {
                 var rockContext = new RockContext();
                 var service = new Rock.Model.CommunicationService(rockContext);
@@ -970,7 +982,81 @@ namespace RockWeb.Blocks.Groups
                 Dictionary<string, string> queryParameters = new Dictionary<string, string>();
                 queryParameters.Add("CommunicationId", communication.Id.ToString());
 
-                NavigateToLinkedPage("CommunicationPage2", queryParameters);
+                NavigateToLinkedPage("EmailPage2", queryParameters);
+            }
+        }
+
+        private void SendText1( )
+        {
+            // create communication
+            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace( GetAttributeValue( "TextPage1" ) ) )
+            {
+                var rockContext = new RockContext();
+                var service = new Rock.Model.CommunicationService( rockContext );
+                var communication = new Rock.Model.Communication();
+                communication.IsBulkCommunication = false;
+                communication.Status = Rock.Model.CommunicationStatus.Transient;
+
+                communication.SenderPersonAliasId = this.CurrentPersonAliasId;
+
+                service.Add( communication );
+
+                var personAliasIds = new GroupMemberService( rockContext ).Queryable().Where( m => m.GroupId == _groupId )
+                                    .ToList()
+                                    .Select( m => m.Person.PrimaryAliasId )
+                                    .ToList();
+
+                // Get the primary aliases
+                foreach ( int personAlias in personAliasIds )
+                {
+                    var recipient = new Rock.Model.CommunicationRecipient();
+                    recipient.PersonAliasId = personAlias;
+                    communication.Recipients.Add( recipient );
+                }
+
+                rockContext.SaveChanges();
+
+                Dictionary<string, string> queryParameters = new Dictionary<string, string>();
+                queryParameters.Add( "CommunicationId", communication.Id.ToString() );
+
+                NavigateToLinkedPage( "EmailPage3", queryParameters );
+            }
+        }
+
+        private void SendText2( )
+        {
+            // create communication
+            if ( this.CurrentPerson != null && _groupId != -1 && !string.IsNullOrWhiteSpace( GetAttributeValue( "TextPage2" ) ) )
+            {
+                var rockContext = new RockContext();
+                var service = new Rock.Model.CommunicationService( rockContext );
+                var communication = new Rock.Model.Communication();
+                communication.IsBulkCommunication = false;
+                communication.Status = Rock.Model.CommunicationStatus.Transient;
+
+                communication.SenderPersonAliasId = this.CurrentPersonAliasId;
+
+                service.Add( communication );
+
+                var personAliasIds = new GroupMemberService( rockContext ).Queryable().Where( m => m.GroupId == _groupId )
+                                    .ToList()
+                                    .Select( m => m.Person.PrimaryAliasId )
+                                    .ToList();
+
+                // Get the primary aliases
+                foreach ( int personAlias in personAliasIds )
+                {
+                    var recipient = new Rock.Model.CommunicationRecipient();
+                    recipient.PersonAliasId = personAlias;
+                    communication.Recipients.Add( recipient );
+                }
+
+                rockContext.SaveChanges();
+
+                Dictionary<string, string> queryParameters = new Dictionary<string, string>();
+                queryParameters.Add( "CommunicationId", communication.Id.ToString() );
+
+                NavigateToLinkedPage( "TextPage2", queryParameters );
             }
         }
 
