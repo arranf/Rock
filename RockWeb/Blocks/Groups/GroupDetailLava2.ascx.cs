@@ -1019,7 +1019,7 @@ namespace RockWeb.Blocks.Groups
                 Dictionary<string, string> queryParameters = new Dictionary<string, string>();
                 queryParameters.Add( "CommunicationId", communication.Id.ToString() );
 
-                NavigateToLinkedPage( "EmailPage3", queryParameters );
+                NavigateToLinkedPage( "TextPage1", queryParameters );
             }
         }
 
