@@ -29,13 +29,13 @@
         </div>
 
         <div class="row">
-            <div class="col-md-4 col-xs-12">
+            <div class="col-md-4">
                 <Rock:Zone Name="Section B" runat="server" />
             </div>
-            <div class="col-md-4 col-xs-6">
+            <div class="col-md-4">
                 <Rock:Zone Name="Section C" runat="server" />
             </div>
-            <div class="col-md-4 col-xs-6">
+            <div class="col-md-4">
                 <Rock:Zone Name="Section D" runat="server" />
             </div>
         </div>
