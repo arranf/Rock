@@ -1,0 +1,35 @@
+{% if Page.DisplayChildPages == 'true' and Page.Pages != empty %}
+	<div class="row">
+	{% comment %}
+	{% assign pageCount = Page.Pages | Size | Where:'DisplayChildPages', true %}
+	{% assign col = 12 | DividedBy:pageCount %}
+	{% endcomment %}
+		{% for childPage in Page.Pages %}
+		
+				{% if childPage.DisplayChildPages == 'true' and childPage.Pages != empty %}
+                        <div class="col-md-2 text-center">
+						<h4><a href="{{ childPage.Url }}">{{ childPage.Title }}</a></h4>
+						<hr>
+						<ul class="center-block text-left">
+						<li class="top">
+						<a href="{{ childPage.Url }}">{{ childPage.Title }}</a>
+						</li>
+						{% for grandchildPage in childPage.Pages %}
+                            <li>
+							<a href="{{ grandchildPage.Url }}">{{ grandchildPage.Title }}</a>
+							</li>
+                            {% if grandchildPage.DisplayChildPages == 'true' %}
+                                {% for greatgrandchildPage in grandchildPage.Pages %}
+                                    <li>
+                                        <a href="{{ greatgrandchildPage.Url }}">{{ greatgrandchildPage.Title }}</a>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+				</div>
+
+        {% endfor %}
+		</div>
+{% endif %}

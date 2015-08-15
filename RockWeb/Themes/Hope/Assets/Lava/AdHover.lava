@@ -1,0 +1,29 @@
+﻿
+{% for item in Items %}
+<div class="row blue-stripe" style="margin: 0 0 0 0">
+  <div class ="captioncontainer">
+    <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
+      <div class="col-md-6 caption">
+        <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
+        <div class="caption__overlay">
+          <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
+            <h1 class="caption__overlay__title">{{ item.Title }}</h1>
+            <p class="caption__overlay__content">{{ item.Story   }}</p>
+          </a>
+        </div>
+      </div>
+      <div>
+      </div>
+
+    </a>
+  </div>
+  <div class="col-md-8 captioncontainer-fix;">
+    <div class="well">
+        <h2>{{ item.Title }}</h2>
+        <p>{{ item.Story }}</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endfor %}

@@ -1,0 +1,15 @@
+﻿  <div id="homepage-rotator" class="carousel slide" data-ride="carousel">
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      {% for item in Items %}
+      {% if forloop.index == 1 -%}
+      <div class="item active">
+        {% else -%}
+        <div class="item">
+          {% endif -%}
+          {{ item.Image }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
