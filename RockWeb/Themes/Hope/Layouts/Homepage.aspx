@@ -70,13 +70,3 @@
     </section>
 </asp:Content>
 
-<asp:Content ID="ctMain2" ContentPlaceHolderID="mainSecond" runat="server">
-    <section class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <Rock:Zone Name="Second Main" runat="server" />
-                </div>
-            </div>
-    </section>
-</asp:Content>
-
