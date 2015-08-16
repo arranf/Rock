@@ -19,7 +19,7 @@
 
     </a>
   </div>
-  <div class="col-md-8 captioncontainer-fix;">
+  <div class="col-md-8 captioncontainer-fix">
     <div class="well">
         <h2>{{ item.Person }}'s Story</h2>
         <p>{{ item.Story | Truncate:400,'...' }}</p>
