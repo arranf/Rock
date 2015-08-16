@@ -1,3 +1,4 @@
+@import "../../../Styles/Bootstrap/variables.less";
 
 // Theme Colors *open*
 @theme-1: #3F81D7; //
@@ -109,7 +110,7 @@
 //--
 @header-hambuger-color: #fff; // The text color of the header minimizer.
 @header-hambuger-bg: @accent-3; // The background color of the header minimizer.
-@header-hamburger-border: @accent-4; // The border color of the header minimizer.
+@header-hamburger-border: darken(@accent-3, 5%); // The border color of the header minimizer.
 
 //// Main Navigation
 @nav-bg: @theme-1;                                     // The background color of the main navigation.
@@ -188,11 +189,11 @@
 @panel-body-padding:          15px;
 @panel-heading-padding:       10px 15px;
 @panel-text:                  @text-color; // The text color of the panel.
-@panel-border:                darken(@theme-3, 10%);                  // The panel's border color.
-@panel-top-border-color:      @theme-7;           // Color of the panel's top border often used as an accent color.
+@panel-border:                darken(@theme-2, 10%);                  // The panel's border color.
+@panel-top-border-color:      darken(@panel-border, 5%);           // Color of the panel's top border often used as an accent color.
 //--
-@panel-heading-bg:            @accent-3;                  // The background color of the panel's header.
-@panel-heading-text-color:    @theme-3-text;              // The heading's text color.
+@panel-heading-bg:            @theme-2;                  // The background color of the panel's header.
+@panel-heading-text-color:    @theme-2-text;              // The heading's text color.
 @panel-heading-border:        darken(@panel-heading-bg, 30%); // The headings border color.
 //--
 @panel-following-active-bg:   @panel-top-border-color;   // The background color of the following square when it's active at the top of panels that support the following feature (e.g. Group Details block).

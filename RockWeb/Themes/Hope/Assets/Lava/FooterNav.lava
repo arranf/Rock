@@ -7,7 +7,7 @@
 		{% for childPage in Page.Pages %}
 		
 				{% if childPage.DisplayChildPages == 'true' and childPage.Pages != empty %}
-                        <div class="col-md-2 text-center">
+                        <div class="col-md-2 text-center footer-nav">
 						<h4><a href="{{ childPage.Url }}">{{ childPage.Title }}</a></h4>
 						<hr>
 						<ul class="center-block text-left">
