@@ -88,8 +88,11 @@
             <section class="footer-blue">
                 <div class="container-fluid">
 		            <div class="row">
-			            <div class="col-md-12">
-				            <Rock:Zone Name="Footer-Stripe" runat="server" />
+			            <div class="col-xs-8">
+				            <Rock:Zone Name="Footer Top Left" runat="server" />
+			            </div>
+                        <div class="col-xs-4">
+				            <Rock:Zone Name="Footer Top Right" runat="server" />
 			            </div>
 		            </div>
                  </div>
