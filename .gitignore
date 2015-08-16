@@ -27,3 +27,4 @@ RockWeb/App_Data/PackageStaging
 /scaffolding.config
 *.sln.GhostDoc.xml
 RockWeb/prepros.cfg
+RockWeb/Prepros Build/
