@@ -1,21 +1,3 @@
-/* makes the font 33% larger relative to the icon container */
-.fa-lg {
-  font-size: 1.33333333em;
-  line-height: 0.75em;
-  vertical-align: -15%;
-}
-.fa-2x {
-  font-size: 2em;
-}
-.fa-3x {
-  font-size: 3em;
-}
-.fa-4x {
-  font-size: 4em;
-}
-.fa-5x {
-  font-size: 5em;
-}
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -248,7 +230,7 @@ p {
 }
 small,
 .small {
-  font-size: 75%;
+  font-size: 93%;
 }
 cite {
   font-style: normal;
@@ -6470,21 +6452,14 @@ header .navbar .loginstatus {
   height: auto;
   border-radius: 6px;
 }
-.captioncontainer-fix {
-  margin: 7.5px;
-  width: 85%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
 .captioncontainer {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
   margin: 7.5px;
   max-width: 400px;
   position: relative;
   vertical-align: middle;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .captioncontainer .caption {
   padding-left: 0;
@@ -6554,6 +6529,13 @@ header .navbar .loginstatus {
   -webkit-transform: translateY(0);
   transform: translateY(0);
 }
+.captioncontainer-fix {
+  margin: 0 !important;
+  max-width: 100%;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
 .blue-stripe {
   background-color: #699de0;
 }
@@ -6581,7 +6563,7 @@ footer .footer-blue .social-icons {
   padding-right: 12px;
 }
 footer .footer-blue .social-icons i {
-  font-size: 34px;
+  font-size: 30px;
   padding-left: 3.75px;
   padding-right: 3.75px;
   color: #fff;
@@ -6594,7 +6576,7 @@ footer .footer-blue .social-icons li {
   padding-top: 10px;
 }
 footer .footer-alt {
-  padding: 6px 12px 70px 12px;
+  padding: 6px 12px 80px 12px;
 }
 footer .footer-alt ul,
 footer .footer-alt li {
@@ -6615,18 +6597,24 @@ footer .footer-copyright {
   color: #eeeeee;
   font-size: 15px;
 }
-footer .footer-copyright ul,
+footer .footer-copyright ul {
+  display: block;
+  padding-left: 0;
+  margin-left: 0;
+  margin-bottom: 7.5px;
+}
 footer .footer-copyright li {
   display: block;
   padding-left: 0;
   margin-left: 2.14285714em;
 }
 footer .footer-final ul {
-  list-style-type: disc;
+  list-style: disc;
+  list-style-position: inside;
 }
 footer .footer-final li {
   margin-left: 0;
-  list-style-type: disc;
+  display: list-item;
 }
 footer hr {
   border-color: #c8c8c8;
@@ -6716,7 +6704,7 @@ blockquote.pull-right {
   border-right-width: 1px;
 }
 blockquote small {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 300;
 }
 @media (min-width: 768px) {
@@ -6740,27 +6728,30 @@ blockquote small {
     padding: 0px;
     font-size: 25.6px;
   }
-  footer .footer-alt .footer-nav ul {
+  footer .footer-alt {
+    padding: 6px 12px 20px 12px;
+  }
+  footer .footer-alt .footer-nav-col ul {
     display: block;
     line-height: 22px;
   }
-  footer .footer-alt .footer-nav li {
+  footer .footer-alt .footer-nav-col li {
     margin-left: 20px;
     display: list-item;
     text-align: left;
   }
   footer .footer-alt .footer-copyright .footer-contact ul {
-    margin-left: 15px;
     display: inline-block;
   }
   footer .footer-alt .footer-copyright .footer-contact li {
     display: inline-block;
     list-style-type: none;
-    margin-left: 30px;
+    margin-left: 18px;
   }
   footer .footer-alt .footer-copyright .footer-contact i {
-    left: -1.2em;
+    left: -1em;
     width: 1.5em;
+    padding-right: 10px;
   }
 }
 @media (min-width: 992px) {
@@ -6769,5 +6760,6 @@ blockquote small {
   }
   .captioncontainer-fix {
     margin: 7.5px 7.5px 7.5px 7.5px;
+    width: 75%;
   }
 }

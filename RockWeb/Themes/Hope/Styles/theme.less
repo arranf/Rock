@@ -1,7 +1,6 @@
 ﻿
 // Load Master Styles
 // -------------------------
-@import "../../../Styles/FontAwesome/larger.less";
 @import "../../../Styles/Bootstrap/scaffolding.less";
 @import "../../../Styles/Bootstrap/type.less";
 @import "../../../Styles/Bootstrap/variables.less";
@@ -165,18 +164,13 @@ header {
     }
 }
 
-.captioncontainer-fix {
-    margin: @spacing-sm-px;
-    width: 85%;
-    .center-block;
-}
 
 .captioncontainer {
-    .center-block;
     margin: @spacing-sm-px;
     max-width: 400px;
     position: relative;
     vertical-align: middle;
+    .center-block;
 
     .caption {
         padding-left: 0;
@@ -254,6 +248,13 @@ header {
     }
 }
 
+.captioncontainer-fix {   
+    margin: 0 !important;
+    max-width: 100%;
+    .center-block !important;
+}
+
+
 .blue-stripe {
     background-color: lighten(@theme-2, 10%);
 
@@ -285,7 +286,7 @@ footer {
             padding-right: @padding-base-horizontal;
 
             i {
-                font-size: @font-size-large*1.7;
+                font-size: @font-size-large*1.5;
                 padding-left: (@spacing-sm-px/2);
                 padding-right: (@spacing-sm-px/2);
                 color: #fff;
@@ -304,7 +305,7 @@ footer {
 
 
     .footer-alt {
-        padding: @padding-base-vertical @padding-base-horizontal 70px @padding-base-horizontal;
+        padding: @padding-base-vertical @padding-base-horizontal 80px @padding-base-horizontal;
 
         ul, li {
             .list-inline;
@@ -319,7 +320,15 @@ footer {
         color: @gray-lighter;
         font-size: @font-size-base+-1;
 
-        ul, li {
+
+        ul {
+            display: block;
+            padding-left: 0;
+            margin-left: 0;
+            margin-bottom: @spacing-sm-px;
+        }
+        
+        li {
             display: block;
             padding-left: 0;
             margin-left: 2.14285714em;
@@ -328,11 +337,12 @@ footer {
 
                 .footer-final {
                 ul {
-                    list-style-type: disc;
+                    list-style: disc;
+                    list-style-position: inside;
                 }
                 li {
                     margin-left: 0;
-                    list-style-type: disc;
+                    display: list-item;
                 }
                 
             }
@@ -476,8 +486,9 @@ blockquote {
         }
 
         .footer-alt {
+            padding: @padding-base-vertical @padding-base-horizontal 20px @padding-base-horizontal;
 
-          .footer-nav {
+          .footer-nav-col {
               ul {
               display:block;
               line-height:@line-height-computed;
@@ -494,19 +505,19 @@ blockquote {
             .footer-contact {
 
                 ul {
-                    margin-left: @spacing-md-px;
                     display: inline-block;
                 }
 
                 li {
                     display: inline-block;
                     list-style-type: none;
-                    margin-left: @spacing-lg-px;
+                    margin-left: @spacing-md-px*1.2;
                 }
 
                 i {
-                    left: -1.2em;
+                    left: -1em;
                     width: 1.5em;
+                    padding-right: 10px;
                 }
                 }
             }
@@ -522,6 +533,7 @@ blockquote {
 
     .captioncontainer-fix {
         margin: @spacing-sm-px @spacing-sm-px @spacing-sm-px @spacing-sm-px;
+        width: 75%;
     }
 }
 
