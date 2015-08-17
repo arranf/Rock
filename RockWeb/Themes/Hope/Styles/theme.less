@@ -534,10 +534,9 @@ blockquote {
         }
     }
 
-.swap-wrapper {
-  display: flex;
-
-    .swap-first {
+.swap-wrapper-inline {
+  display: inline-flex;
+      .swap-first {
         order: 1;
     }
 
@@ -545,6 +544,17 @@ blockquote {
         order: 2;
     }
 }
+.swap-wrapper {
+  display: flex;
+      .swap-first {
+        order: 1;
+    }
+
+    .swap-second {
+        order: 2;
+    }
+}
+
 }
 
 // Medium devices (desktops, 992px and up)

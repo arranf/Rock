@@ -6760,6 +6760,15 @@ blockquote small {
     width: 1.5em;
     padding-right: 10px;
   }
+  .swap-wrapper-inline {
+    display: inline-flex;
+  }
+  .swap-wrapper-inline .swap-first {
+    order: 1;
+  }
+  .swap-wrapper-inline .swap-second {
+    order: 2;
+  }
   .swap-wrapper {
     display: flex;
   }
