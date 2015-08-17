@@ -1,5 +1,13 @@
 ﻿<%@ Page Language="C#" MasterPageFile="Site.Master" AutoEventWireup="true" Inherits="Rock.Web.UI.RockPage" %>
 
+<asp:Content ID="ctFeature" ContentPlaceHolderID="feature" runat="server">
+    <section class="container-fluid">
+        <div class="row">
+                <Rock:Zone Name="Feature" runat="server" />
+        </div>
+    </section>
+</asp:Content>
+
 <asp:Content ID="ctMain" ContentPlaceHolderID="main" runat="server">
     
 	<main class="container">
@@ -20,7 +28,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <Rock:Zone Name="Feature" runat="server" />
+                <Rock:Zone Name="Sub Feature" runat="server" />
             </div>
         </div>
 

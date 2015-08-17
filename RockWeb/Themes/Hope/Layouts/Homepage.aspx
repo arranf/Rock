@@ -1,18 +1,16 @@
 ﻿<%@ Page Language="C#" MasterPageFile="Site.Master" AutoEventWireup="true" Inherits="Rock.Web.UI.RockPage" %>
 
 <asp:Content ID="ctFeature" ContentPlaceHolderID="feature" runat="server">
-    <section>
-            <div class="row">
-                <div class="col-md-12">
-                    <Rock:Zone Name="Feature" runat="server" />
-                </div>
-            </div>
+    <section class="container-fluid">
+        <div class="row">
+                <Rock:Zone Name="Feature" runat="server" />
+        </div>
     </section>
 </asp:Content>
 
 <asp:Content ID="ctMain" ContentPlaceHolderID="main" runat="server">
-    
-	<main class="container-fluid">
+
+    <main class="container-fluid">
         
         <!-- Start Content Area -->
         
@@ -40,7 +38,7 @@
             </div>
         </div>
 
-                <div class="row">
+        <div class="row">
             <div class="col-md-4">
                 <Rock:Zone Name="Left Side Feature" runat="server" />
             </div>
@@ -57,16 +55,14 @@
         <!-- End Content Area -->
 
 	</main>
-        
+
 </asp:Content>
 
 <asp:Content ID="ctMiddle" ContentPlaceHolderID="middle" runat="server">
-    <section>
-            <div class="row">
-                <div class="col-md-12">
-                    <Rock:Zone Name="Middle" runat="server" />
-                </div>
-            </div>
+    <section class="container-fluid">
+            <div class="col-md-12">
+                <Rock:Zone Name="Middle" runat="server" />
+        </div>
     </section>
 </asp:Content>
 
