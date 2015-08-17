@@ -149,10 +149,7 @@ header {
 
 .welcome {
     line-height: @line-height-small;
-
-    .btn {
-        margin-top: @spacing-md-px;
-    }
+    margin-bottom: @spacing-md-px;
 }
 
 .tri-focus {
@@ -163,6 +160,16 @@ header {
         .img-rounded;
     }
 }
+
+.vert-stack {
+    padding: @spacing-md-px;
+
+    img {
+        .img-responsive;
+        .img-circle;
+    }
+}
+
 
 .box {  
     cursor: pointer;  
@@ -257,6 +264,7 @@ img {
 
 .blue-stripe {
     background-color: lighten(@theme-2, 10%);
+    margin-top: @spacing-md-px;
 
     .testimony-container {
         padding-top: 5px;
