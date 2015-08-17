@@ -1,57 +1,61 @@
-﻿<div class="blue-stripe" style="margin: 0 0 0 0">
-{% for item in Items %}
-{% assign loopCount = forloop.index | Modulo:2 %}
-{% if loopCount == 1 %}
-<div class="row testimony-container">
-	<div class="col-md-4">
-	<div class ="box">
-		<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
-		<div class="overbox">
-			<div class="title overtext">
-				<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
-			</div>
-			<div class="tagline overtext">
-				{{ item.Story | Truncate:85,'...' }}
-			</div>
-		</div>
-	</div>	  <!-- Box -->
-	</div><!-- Col -->
+﻿<div class="blue-stripe">
+  {% for item in Items %}
+  {% assign loopCount = forloop.index | Modulo:2 %}
+  {% if loopCount == 1 %}
+  <div class="testimony-container">
+    <div class="col-md-4">
+      <div class ="box">
+        <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
+        <div class="overbox">
+          <div class="title overtext">
+            <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
+          </div>
+          <div class="tagline overtext">
+            {{ item.Story | Truncate:85,'...' }}
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div class="col-md-8 box-fix">
-    <div class="well">
+    <div class="col-md-8 box-fix">
+      <div class="well">
         <h2>{{ item.Person }}'s Story</h2>
         <p>{{ item.Story | Truncate:600,'...' }}</p>
-      <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
-        <h4>Read More ></h4>
-      </a>
-     </div>
-</div>
+        <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
+          <h4>Read More ></h4>
+        </a>
+      </div>
+    </div>
+  </div>
   {% else %}
-<div class="row testimony-container swap-wrapper">
-	<div class="col-md-4 swap-second">
-		<div class ="box">
-			<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
-			<div class="overbox">
-				<div class="title overtext">
-					<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
-				</div>
-				<div class="tagline overtext">
-					{{ item.Story | Truncate:85,'...' }}
-				</div>
-			</div>
-		</div>	  <!-- Box -->
-	</div><!-- Col -->
+  <div class="testimony-container">
+    <div class="swap-wrapper-inline">
+      <div class="col-md-4 swap-second">
+        <div class ="box">
+          <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
+          <div class="overbox">
+            <div class="title overtext">
+              <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
+            </div>
+            <div class="tagline overtext">
+              {{ item.Story | Truncate:85,'...' }}
+            </div>
+          </div>
+        </div>
+      </div>
 
-	<div class="col-md-8 box-fix swap-first">
-		<div class="well">
-			<h2>{{ item.Person }}'s Story</h2>
-			<p>{{ item.Story | Truncate:600,'...' }}</p>
-			<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
-			<h4>Read More ></h4>
-			</a>
-			</div>
-	</div>
-{% endif %}
-	</div>
-{% endfor %}
+      <div class="col-md-8 box-fix swap-first">
+        <div class="well">
+          <h2>{{ item.Person }}'s Story</h2>
+          <p>{{ item.Story | Truncate:600,'...' }}</p>
+          <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
+            <h4>Read More ></h4>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+  {% endfor %}
 </div>
