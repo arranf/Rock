@@ -6452,92 +6452,96 @@ header .navbar .loginstatus {
   height: auto;
   border-radius: 6px;
 }
-.captioncontainer {
-  margin: 7.5px;
-  max-width: 400px;
+.box {
+  cursor: pointer;
+  height: 250px;
   position: relative;
-  vertical-align: middle;
+  overflow: hidden;
+  font-family: 'Open Sans', sans-serif;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
-.captioncontainer .caption {
-  padding-left: 0;
-  padding-right: 0;
-  position: relative;
-  overflow: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-}
-.captioncontainer a {
+.box a {
   color: #fff;
 }
-.captioncontainer h1 {
-  padding: 0px;
-  margin: 0px;
-  padding-bottom: 7px;
-  padding-left: 3px;
-}
-.captioncontainer .caption::before {
-  border-radius: 6px;
-  content: ' ';
+.box img {
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
   left: 0;
-  background: transparent;
-  transition: background 0.35s ease-out;
-}
-.captioncontainer .caption:hover::before {
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.5);
-}
-.captioncontainer img {
-  display: block;
+  -webkit-transition: all 300ms ease-out;
+  -moz-transition: all 300ms ease-out;
+  -o-transition: all 300ms ease-out;
+  -ms-transition: all 300ms ease-out;
+  transition: all 300ms ease-out;
   width: 100% \9;
   max-width: 100%;
   height: auto;
   border-radius: 6px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-.captioncontainer .caption__overlay {
-  border-radius: 6px;
+.box .overbox {
+  background-color: #304562;
   position: absolute;
   top: 0;
-  right: 0;
-  bottom: 0;
   left: 0;
-  padding: 10px;
-  color: white;
-  -webkit-transform: translateY(100%);
-  transform: translateY(100%);
-  transition: -webkit-transform 0.35s ease-out;
-  transition: transform 0.35s ease-out;
-}
-.captioncontainer .caption:hover .caption__overlay {
+  color: #fff;
+  z-index: 100;
+  -webkit-transition: all 300ms ease-out;
+  -moz-transition: all 300ms ease-out;
+  -o-transition: all 300ms ease-out;
+  -ms-transition: all 300ms ease-out;
+  transition: all 300ms ease-out;
+  opacity: 0;
+  padding: 130px 20px;
   border-radius: 6px;
-  -webkit-transform: translateY(0);
-  transform: translateY(0);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-.captioncontainer .caption__overlay__title {
-  -webkit-transform: translateY(-webkit-calc(-110%));
-  transform: translateY(calc(-110%));
-  transition: -webkit-transform 0.35s ease-out;
-  transition: transform 0.35s ease-out;
+.box:hover .overbox {
+  opacity: 0.75;
 }
-.captioncontainer .caption:hover .caption__overlay__title {
-  -webkit-transform: translateY(0);
-  transform: translateY(0);
+.box .overtext {
+  -webkit-transition: all 300ms ease-out;
+  -moz-transition: all 300ms ease-out;
+  -o-transition: all 300ms ease-out;
+  -ms-transition: all 300ms ease-out;
+  transition: all 300ms ease-out;
+  transform: translateY(40px);
+  -webkit-transform: translateY(40px);
 }
-.captioncontainer-fix {
-  margin: 0 !important;
-  max-width: 100%;
-  display: block !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+.box .title {
+  font-size: 2.5em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition-delay: 0.1s;
+  transition-duration: 0.2s;
+}
+.box:hover .title,
+.box:focus .title {
+  opacity: 1;
+  transform: translateY(0px);
+  -webkit-transform: translateY(0px);
+}
+.box .tagline {
+  font-size: 0.8em;
+  opacity: 0;
+  transition-delay: 0.2s;
+  transition-duration: 0.2s;
+}
+.box:hover .tagline,
+.box:focus .tagline {
+  opacity: 1;
+  transform: translateX(0px);
+  -webkit-transform: translateX(0px);
 }
 .blue-stripe {
   background-color: #699de0;
+}
+.blue-stripe .testimony-container {
+  padding-top: 5px;
 }
 .blue-stripe .well {
   padding-bottom: 2px;
@@ -6683,10 +6687,13 @@ footer a:focus {
   position: relative;
   top: -12px;
 }
-.panel.panel {
+.panel {
   margin-top: 7.5px;
 }
-.panel.panel .grid.grid-panel {
+.panel .panel-heading .panel-title i {
+  color: #fff;
+}
+.panel .grid.grid-panel {
   margin: 0;
 }
 .lead {
@@ -6753,13 +6760,18 @@ blockquote small {
     width: 1.5em;
     padding-right: 10px;
   }
+  .swap-wrapper {
+    display: flex;
+  }
+  .swap-wrapper .swap-first {
+    order: 1;
+  }
+  .swap-wrapper .swap-second {
+    order: 2;
+  }
 }
 @media (min-width: 992px) {
   .captioncontainer {
     margin: 7.5px;
-  }
-  .captioncontainer-fix {
-    margin: 7.5px 7.5px 7.5px 7.5px;
-    width: 75%;
   }
 }

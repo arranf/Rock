@@ -7,7 +7,7 @@
         {% else -%}
         <div class="item">
           {% endif -%}
-          {{ item.Image }}
+            {{ item.Image }}
         </div>
         {% endfor %}
       </div>
