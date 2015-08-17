@@ -7,7 +7,4 @@
   {% endfor %}
   {% assign firstCampus = Campuses | First %}
   {% for time in firstCampus.ServiceTimes limit:1 %}
-  on {{ time.Day }} at {{ time.Time }}
-  {% endfor %}
-</p>
-    <br />
+  on {{ time.Day }} at {{ time.Time }}{% endfor %}</p>
