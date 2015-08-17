@@ -1,0 +1,24 @@
+﻿<div class="row">
+  {% for campus in Campuses %}
+  {% assign campusOdd = forloop.length | Modulo:2 %}
+  {{ campusTotal }}
+  {% if campusTotal == 1 and forloop.last == 'true' %}
+  <div class="col-md-12">
+    {% else %}
+    <div class="col-md-6">
+      {% endif %}
+      <div class="well campus-list text-center">
+        <h3>{{ campus.Name }}</h3>
+        <p>{{ campus.Location.Street1 }}, {{ campus.Location.PostalCode }}</p>
+        <p>
+          {% for time in campus.ServiceTimes %}
+          <b>{{ time.Day }} {{ time.Time }}</b>
+        </p>
+        {% endfor %}
+        <h4>
+          <a href="~/location?campusId={{ campus.Id }}">Discover More ></a>
+        </h4>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
