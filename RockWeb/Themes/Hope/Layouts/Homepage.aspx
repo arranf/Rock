@@ -60,9 +60,9 @@
 
 <asp:Content ID="ctMiddle" ContentPlaceHolderID="middle" runat="server">
     <section class="container-fluid">
-            <div class="col-md-12">
-                <Rock:Zone Name="Middle" runat="server" />
-        </div>
+            <div class="row">
+                    <Rock:Zone Name="Middle" runat="server" />
+            </div>
     </section>
 </asp:Content>
 
