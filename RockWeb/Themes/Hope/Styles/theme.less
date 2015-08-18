@@ -280,6 +280,39 @@ footer {
 }
 
 //visit items
+.campus-list {
+    .text-center;
+    .center-block;
+    border-radius: 10px;
+    background: no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #fff;
+    padding-bottom: @padding-base-vertical;
+    padding-top: @padding-small-vertical;
+    width: 90%;
+
+    h1, h2, h3, h4 {
+        font-weight: @font-weight-bold;
+    }
+
+    p {
+        font-size: @font-size-large;
+    }
+
+    a {
+        color: @theme-3;
+
+        &:hover {
+            
+            color: @theme-4;
+        }
+    }
+
+}
+
 .vert-stack {
     padding: @spacing-md-px;
 
@@ -294,17 +327,20 @@ footer {
 
     .campus-info {
         .text-center;
-    small {
-        color: @gray-dark;
-    }
+
+        small {
+            color: @gray-dark;
+        }
     }
 
     .campus-address {
         .text-center;
-        h3,h4 {
+
+        h3, h4 {
             margin-top: 7px;
         }
     }
+
     .campus-image {
         padding-top: 0.5em;
     }
@@ -312,6 +348,11 @@ footer {
 
 .pastor-box {
     background-color: @theme-3;
+    color: #fff;
+
+    i {
+        padding-right: 5px;
+    }
 
     img {
         vertical-align: top;
@@ -324,17 +365,40 @@ footer {
     }
 
     .well {
-        
+        color: @gray-dark;
     }
 
     h2, ul {
-         color: @theme-2-text;
+        color: @theme-2-text;
     }
 
     a {
         color: #fff;
     }
+}
+
+//next steps
+.next-step {
+    .center-block;
+    padding-top: @padding-large-vertical;
+    padding-bottom: @padding-large-vertical;
+
+    img {
+        .img-rounded;
+        .img-responsive;
     }
+
+    h2 {
+        font-weight: 900;
+        color: white;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 5rem;
+        transform: translate(-50%, -50%);
+    }
+}
 
 //general items
 .box {
@@ -398,7 +462,6 @@ footer {
 
     .title {
         font-size: 2.5em;
-        text-transform: uppercase;
         opacity: 0;
         transition-delay: 0.1s;
         transition-duration: 0.2s;
@@ -422,6 +485,37 @@ footer {
         opacity: 1;
         transform: translateX(0px);
         -webkit-transform: translateX(0px);
+    }
+}
+
+.tint {
+    position: relative;
+    .img-responsive;
+
+    img {
+        vertical-align: top;
+        .img-rounded;
+        width: 100%;
+        height: auto;
+    }
+
+    &:before {
+        .img-rounded;
+        content: '\A';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,0.8);
+        opacity: 0;
+        transition: all 1s;
+        -webkit-transition: all 1s;
+        opacity: 0.5;
+    }
+
+    &:hover {
+        opacity: 0.7;
     }
 }
 
@@ -456,20 +550,23 @@ footer {
 }
 
 #map {
-        width:100%;
-        height:300px;
-    }
-    .gm-style-iw * {
-        display: block;
-        width: 100%;
-    }
-    .gm-style-iw h4, .gm-style-iw p {
-        margin: 0;
-        padding: 0;
-    }
-    .gm-style-iw a {
-        color: #4272db;
-    }
+    width: 100%;
+    height: 300px;
+}
+
+.gm-style-iw * {
+    display: block;
+    width: 100%;
+}
+
+.gm-style-iw h4, .gm-style-iw p {
+    margin: 0;
+    padding: 0;
+}
+
+.gm-style-iw a {
+    color: #4272db;
+}
 
 #splash.error {
     background-color: @gray-lighter;
@@ -569,11 +666,12 @@ blockquote {
             padding: @padding-base-vertical @padding-base-horizontal 20px @padding-base-horizontal;
 
             .footer-nav {
-                 .center-block;
+                .center-block;
             }
 
             .footer-nav-col {
                 .text-center;
+
                 ul {
                     .center-block;
                     .text-left;
@@ -611,18 +709,20 @@ blockquote {
             }
         }
     }
-    
+
     .campus-header {
         h4 {
             margin-top: 11px;
         }
-.campus-info {
-    text-align: left !important;
-}
-    .campus-address {
-        .text-left;
-        .center-block;
-    }
+
+        .campus-info {
+            text-align: left !important;
+        }
+
+        .campus-address {
+            .text-left;
+            .center-block;
+        }
     }
 
     .swap-wrapper-inline {

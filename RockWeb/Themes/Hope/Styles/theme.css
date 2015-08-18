@@ -6551,6 +6551,37 @@ footer a:active,
 footer a:focus {
   color: #cccccc;
 }
+.campus-list {
+  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 10px;
+  background: no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  color: #fff;
+  padding-bottom: 6px;
+  padding-top: 5px;
+  width: 90%;
+}
+.campus-list h1,
+.campus-list h2,
+.campus-list h3,
+.campus-list h4 {
+  font-weight: 700;
+}
+.campus-list p {
+  font-size: 20px;
+}
+.campus-list a {
+  color: #93b8e9;
+}
+.campus-list a:hover {
+  color: #bed4f1;
+}
 .vert-stack {
   padding: 15px;
 }
@@ -6579,6 +6610,10 @@ footer a:focus {
 }
 .pastor-box {
   background-color: #93b8e9;
+  color: #fff;
+}
+.pastor-box i {
+  padding-right: 5px;
 }
 .pastor-box img {
   vertical-align: top;
@@ -6588,12 +6623,39 @@ footer a:focus {
   color: #222222;
   font-size: 20px;
 }
+.pastor-box .well {
+  color: #333333;
+}
 .pastor-box h2,
 .pastor-box ul {
   color: #ffffff;
 }
 .pastor-box a {
   color: #fff;
+}
+.next-step {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.next-step img {
+  border-radius: 6px;
+  display: block;
+  width: 100% \9;
+  max-width: 100%;
+  height: auto;
+}
+.next-step h2 {
+  font-weight: 900;
+  color: white;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 5rem;
+  transform: translate(-50%, -50%);
 }
 .box {
   cursor: pointer;
@@ -6657,7 +6719,6 @@ footer a:focus {
 }
 .box .title {
   font-size: 2.5em;
-  text-transform: uppercase;
   opacity: 0;
   transition-delay: 0.1s;
   transition-duration: 0.2s;
@@ -6679,6 +6740,36 @@ footer a:focus {
   opacity: 1;
   transform: translateX(0px);
   -webkit-transform: translateX(0px);
+}
+.tint {
+  position: relative;
+  display: block;
+  width: 100% \9;
+  max-width: 100%;
+  height: auto;
+}
+.tint img {
+  vertical-align: top;
+  border-radius: 6px;
+  width: 100%;
+  height: auto;
+}
+.tint:before {
+  border-radius: 6px;
+  content: '\A';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: all 1s;
+  -webkit-transition: all 1s;
+  opacity: 0.5;
+}
+.tint:hover {
+  opacity: 0.7;
 }
 .img-dark {
   position: relative;
