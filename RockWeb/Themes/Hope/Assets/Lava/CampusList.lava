@@ -1,18 +1,27 @@
 ﻿<div class="row">
   {% for campus in Campuses %}
-  {% assign campusOdd = forloop.length | Modulo:2 %}
-  {{ campusTotal }}
-  {% if campusTotal == 1 and forloop.last == 'true' %}
-  <div class="col-md-12">
+  {% assign campusTotal = forloop.length %}
+  {% assign campusOdd = campusTotal | Modulo:2 %}
+  {% assign split1 = Items[forloop.index0].Image | Split:'=' %}
+  {% assign guid = split1.[2] | Truncate:36,'' %}
+  {% if campusOdd == 1 and forloop.last == 'true' %}
+  <div class="col-md-12 campus-list">
     {% else %}
     <div class="col-md-6">
       {% endif %}
-      <div class="well campus-list text-center">
+      <div class=" campus-list" style="background: 
+    linear-gradient(
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url(/GetImage.ashx?guid={{ guid }});">
         <h3>{{ campus.Name }}</h3>
         <p>{{ campus.Location.Street1 }}, {{ campus.Location.PostalCode }}</p>
-        <p>
-          {% for time in campus.ServiceTimes %}
-          <b>{{ time.Day }} {{ time.Time }}</b>
+        {% for time in campus.ServiceTimes %}
+        <p class="time">
+          {{ time.Day }}
+          <br />
+          {{ time.Time }}
         </p>
         {% endfor %}
         <h4>
