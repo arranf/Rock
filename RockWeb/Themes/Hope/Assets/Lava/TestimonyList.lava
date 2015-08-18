@@ -7,12 +7,14 @@
       <div class ="box">
         <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
         <div class="overbox">
-          <div class="title overtext">
-            <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
-          </div>
-          <div class="tagline overtext">
-            {{ item.Story | Truncate:85,'...' }}
-          </div>
+          <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
+            <div class="title overtext">
+              <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
+            </div>
+            <div class="tagline overtext">
+              {{ item.Story | Truncate:85,'...' }}
+            </div>
+          </a>
         </div>
       </div>
     </div>
