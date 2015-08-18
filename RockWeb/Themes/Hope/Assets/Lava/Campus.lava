@@ -2,7 +2,7 @@
   Join us at
   {% for campus in Campuses %}
   <b>
-    <a href="~/location?{{ campus.Id }}">{{ campus.Name }}</a>
+    <a href="~/location?campusId={{ campus.Id }}">{{ campus.Name }}</a>
   </b> at {{ campus.Location.Street1 }}{% if forloop.length > 1 and forloop.last == 'false' %} or{% endif %}
   {% endfor %}
   {% assign firstCampus = Campuses | First %}
