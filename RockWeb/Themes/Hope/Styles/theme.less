@@ -290,9 +290,23 @@ footer {
 }
 
 //campus items
-.campus {
+.campus-header {
+
+    .campus-info {
+        .text-center;
     small {
         color: @gray-dark;
+    }
+    }
+
+    .campus-address {
+        .text-center;
+        h3,h4 {
+            margin-top: 7px;
+        }
+    }
+    .campus-image {
+        padding-top: 0.5em;
     }
 }
 
@@ -441,6 +455,22 @@ footer {
     }
 }
 
+#map {
+        width:100%;
+        height:300px;
+    }
+    .gm-style-iw * {
+        display: block;
+        width: 100%;
+    }
+    .gm-style-iw h4, .gm-style-iw p {
+        margin: 0;
+        padding: 0;
+    }
+    .gm-style-iw a {
+        color: #4272db;
+    }
+
 #splash.error {
     background-color: @gray-lighter;
 
@@ -574,10 +604,18 @@ blockquote {
             }
         }
     }
-
+    
+    .campus-header {
+        h4 {
+            margin-top: 11px;
+        }
+.campus-info {
+    text-align: left !important;
+}
     .campus-address {
-        .text-center;
+        .text-left;
         .center-block;
+    }
     }
 
     .swap-wrapper-inline {

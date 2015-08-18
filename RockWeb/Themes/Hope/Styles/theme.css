@@ -6561,8 +6561,21 @@ footer a:focus {
   height: auto;
   border-radius: 50%;
 }
-.campus small {
+.campus-header .campus-info {
+  text-align: center;
+}
+.campus-header .campus-info small {
   color: #333333;
+}
+.campus-header .campus-address {
+  text-align: center;
+}
+.campus-header .campus-address h3,
+.campus-header .campus-address h4 {
+  margin-top: 7px;
+}
+.campus-header .campus-image {
+  padding-top: 0.5em;
 }
 .pastor-box {
   background-color: #93b8e9;
@@ -6696,6 +6709,22 @@ footer a:focus {
 .img-dark:hover:after {
   opacity: 1;
 }
+#map {
+  width: 100%;
+  height: 300px;
+}
+.gm-style-iw * {
+  display: block;
+  width: 100%;
+}
+.gm-style-iw h4,
+.gm-style-iw p {
+  margin: 0;
+  padding: 0;
+}
+.gm-style-iw a {
+  color: #4272db;
+}
 #splash.error {
   background-color: #eeeeee;
 }
@@ -6790,8 +6819,14 @@ blockquote small {
     width: 1.5em;
     padding-right: 10px;
   }
-  .campus-address {
-    text-align: center;
+  .campus-header h4 {
+    margin-top: 11px;
+  }
+  .campus-header .campus-info {
+    text-align: left !important;
+  }
+  .campus-header .campus-address {
+    text-align: left;
     display: block;
     margin-left: auto;
     margin-right: auto;
