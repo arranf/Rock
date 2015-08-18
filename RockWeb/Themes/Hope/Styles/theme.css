@@ -6797,7 +6797,18 @@ blockquote small {
   footer .footer-alt {
     padding: 6px 12px 20px 12px;
   }
+  footer .footer-alt .footer-nav {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  footer .footer-alt .footer-nav-col {
+    text-align: center;
+  }
   footer .footer-alt .footer-nav-col ul {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
     display: block;
     line-height: 22px;
   }

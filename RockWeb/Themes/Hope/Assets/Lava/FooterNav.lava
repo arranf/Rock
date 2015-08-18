@@ -1,6 +1,6 @@
 {% if Page.DisplayChildPages == 'true' and Page.Pages != empty %}
 	<div class="row">
-		<div class="footer-nav center-block">
+		<div class="footer-nav">
 		{% comment %}
 		{% assign pageCount = Page.Pages | Size | Where:'DisplayChildPages', true %}
 		{% assign col = 12 | DividedBy:pageCount %}
@@ -8,10 +8,10 @@
 			{% for childPage in Page.Pages %}
 		
 					{% if childPage.DisplayChildPages == 'true' and childPage.Pages != empty %}
-							<div class="col-md-2 text-center footer-nav-col">
+							<div class="col-md-2 footer-nav-col">
 							<h4><a href="{{ childPage.Url }}">{{ childPage.Title }}</a></h4>
 							<hr>
-							<ul class="center-block text-left">
+							<ul>
 							<li class="top">
 							<a href="{{ childPage.Url }}">{{ childPage.Title }}</a>
 							</li>
@@ -29,9 +29,9 @@
 							{% endfor %}
 						</ul>
 					{% endif %}
-					</div>
+					</div> <! -- nav col -->
 
 			{% endfor %}
-		</div>
-	</div>
+		</div> <!-- footer-nav -->
+	</div> <!-- row -->
 {% endif %}
