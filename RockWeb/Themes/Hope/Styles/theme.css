@@ -6640,6 +6640,17 @@ footer a:focus {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+.next-step h2 {
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.7em;
+  color: white;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .next-step img {
   border-radius: 6px;
   display: block;
@@ -6647,14 +6658,49 @@ footer a:focus {
   max-width: 100%;
   height: auto;
 }
-.next-step h2 {
+.banner h1,
+.banner h2,
+.banner h3,
+.banner h4,
+.banner h5 {
+  margin-top: 0;
+  text-align: center;
   font-weight: 900;
+  font-size: 1.7em;
   color: white;
   margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
-  font-size: 5rem;
+  transform: translate(-50%, -50%);
+  top: 30%;
+  transform: translate(-50%, -70%);
+  font-size: 1.5em;
+}
+.banner p {
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.7em;
+  color: white;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  top: 65%;
+  transform: translate(-50%, -45%);
+  font-size: 0.7em;
+}
+.layer {
+  text-align: center;
+  font-weight: 900;
+  font-size: 1.7em;
+  color: white;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 .box {
@@ -6750,7 +6796,6 @@ footer a:focus {
 }
 .tint img {
   vertical-align: top;
-  border-radius: 6px;
   width: 100%;
   height: auto;
 }
@@ -6933,6 +6978,15 @@ blockquote small {
     margin-left: auto;
     margin-right: auto;
   }
+  .banner h1 {
+    font-size: 4em;
+  }
+  .banner p {
+    font-size: 2em;
+  }
+  .next-step h2 {
+    font-size: 2.6em;
+  }
   .swap-wrapper-inline {
     display: inline-flex;
   }
@@ -6955,5 +7009,25 @@ blockquote small {
 @media (min-width: 992px) {
   .captioncontainer {
     margin: 7.5px;
+  }
+  .banner h1 {
+    font-size: 5em;
+  }
+  .banner p {
+    font-size: 1.6em;
+  }
+  .next-step h2 {
+    font-size: 2.5em;
+  }
+}
+@media (min-width: 1200px) {
+  .banner h1 {
+    font-size: 5.5em;
+  }
+  .banner p {
+    font-size: 2em;
+  }
+  .next-step h2 {
+    font-size: 2.6em;
   }
 }

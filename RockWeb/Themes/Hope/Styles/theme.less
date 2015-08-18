@@ -306,11 +306,9 @@ footer {
         color: @theme-3;
 
         &:hover {
-            
             color: @theme-4;
         }
     }
-
 }
 
 .vert-stack {
@@ -383,24 +381,48 @@ footer {
     padding-top: @padding-large-vertical;
     padding-bottom: @padding-large-vertical;
 
+    h2 {
+        .layer;
+    }
+
     img {
         .img-rounded;
         .img-responsive;
     }
-
-    h2 {
-        font-weight: 900;
-        color: white;
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        font-size: 5rem;
-        transform: translate(-50%, -50%);
-    }
 }
 
 //general items
+.banner {
+    h1, h2, h3, h4, h5 {
+        margin-top: 0;
+        .layer;
+        top: 30%;
+        transform: translate(-50%,-70%);
+        font-size: 1.5em;
+    }
+
+    p {
+        .layer;
+        width: 100%;
+        top: 65%;
+        transform: translate(-50%,-45%);
+        font-size: 0.7em;
+    }
+}
+
+
+.layer {
+    .text-center;
+    font-weight: 900;
+    font-size: 1.7em;
+    color: white;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .box {
     cursor: pointer;
     height: 250px;
@@ -494,7 +516,6 @@ footer {
 
     img {
         vertical-align: top;
-        .img-rounded;
         width: 100%;
         height: auto;
     }
@@ -725,6 +746,22 @@ blockquote {
         }
     }
 
+    .banner {
+        h1 {
+            font-size: 4em;
+        }
+
+        p {
+            font-size: 2em;
+        }
+    }
+
+    .next-step {
+            h2 {
+        font-size: 2.6em;
+    }
+    }
+
     .swap-wrapper-inline {
         display: inline-flex;
 
@@ -755,8 +792,39 @@ blockquote {
     .captioncontainer {
         margin: @spacing-sm-px;
     }
+
+    .banner {
+        h1 {
+            font-size: 5em;
+        }
+
+        p {
+            font-size: 1.6em;
+        }
+    }
+
+    .next-step {
+            h2 {
+        font-size: 2.5em;
+    }
+    }
 }
 
 // Large devices (large desktops, 1200px and up)
 @media (min-width: @screen-lg-min) {
+    .banner {
+        h1 {
+            font-size: 5.5em;
+        }
+
+        p {
+            font-size: 2em;
+        }
+    }
+
+    .next-step {
+            h2 {
+        font-size: 2.6em;
+    }
+    }
 }
