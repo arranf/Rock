@@ -1,9 +1,9 @@
 {% for item in Items %}
 <div class="col-md-6">
-	<div class="next-step">
+	<div class="two-wide">
 		<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
 		<div class="tint">
-			<h2>{{ item.Title }}</h2>
+			<h2>{{ item.CalltoAction }}</h2>
 			<a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
 		</div>
 		</a>
