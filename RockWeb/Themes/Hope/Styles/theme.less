@@ -4,6 +4,7 @@
 @import "../../../Styles/Bootstrap/scaffolding.less";
 @import "../../../Styles/Bootstrap/type.less";
 @import "../../../Styles/Bootstrap/variables.less";
+@import "player.less";
 @import "../../../Styles/_rock-core.less";
 @import "../../../Styles/_store.less";
 @import "../../../Styles/_rock-variables.less";
@@ -33,8 +34,6 @@ main {
     display: block;
 }
 
-
-
 img {
     display: block;
     margin-left: auto;
@@ -56,7 +55,7 @@ img {
         background-color: @header-hambuger-bg;
         border-color: @header-hamburger-border;
 
-        &:hover, ::before, :after, .collapsed {
+        &:hover, &:before, &:after, &:focus, .collapsed {
             background-color: @header-hambuger-bg;
             border-color: @header-hamburger-border;
         }
@@ -161,7 +160,6 @@ header {
     }
 }
 
-//footer items
 .blue-stripe {
     background-color: lighten(@theme-2, 10%);
     margin-top: @spacing-md-px;
@@ -174,6 +172,8 @@ header {
         padding-bottom: 2px;
     }
 }
+
+//footer items
 
 footer {
     color: @accent-2-text;
@@ -376,7 +376,7 @@ footer {
 }
 
 //next steps
-.next-step {
+.two-wide {
     .center-block;
     padding-top: @padding-large-vertical;
     padding-bottom: @padding-large-vertical;
@@ -391,25 +391,87 @@ footer {
     }
 }
 
+.message-item {
+    .buttons {
+        .center-block;
+        .text-center;
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        img {
+            margin-bottom: @spacing-md-px;
+        }
+    }
+}
+
+.message-date {
+
+    .lead {
+        margin-bottom: @spacing-sm-px;
+    }
+}
+
+//listen
+
+.top-stripe {
+    background-color: lighten(@theme-2, 10%);
+    padding: @padding-base-vertical @padding-base-horizontal @padding-base-vertical @padding-base-horizontal;
+
+    p {
+        margin: 0;
+        font-size: @font-size-mid;
+        font-weight: @font-weight-semibold;
+    }
+}
+
+.message-item {
+    .tint {
+        h2 {
+            font-size: 1.3em;
+        }
+    }
+}
+
+.podcast-pages {
+    .text-center;
+    padding: @padding-large-vertical @padding-base-horizontal @padding-base-vertical @padding-base-horizontal;
+
+    .active {
+        font-weight: @font-weight-bold;
+    }
+}
+
+.podcast-date {
+    .text-center;
+
+    p {
+        margin-bottom: @spacing-sm-px;
+    }
+}
+
 //general items
 .banner {
+    width: 100%;
+
     h1, h2, h3, h4, h5 {
         margin-top: 0;
         .layer;
-        top: 30%;
         transform: translate(-50%,-70%);
-        font-size: 1.5em;
+        font-size: 1.6em;
+        width: 100%;
     }
 
     p {
         .layer;
-        width: 100%;
-        top: 65%;
-        transform: translate(-50%,-45%);
-        font-size: 0.7em;
+        width: 80%;
+        transform: translate(-50%,35%);
+        font-size: 0.6em;
+        padding-right: @padding-small-horizontal;
+        padding-left: @padding-small-horizontal;
     }
 }
-
 
 .layer {
     .text-center;
@@ -510,14 +572,12 @@ footer {
     }
 }
 
-.tint {
+.tint, .tint-edge {
     position: relative;
-    .img-responsive;
 
     img {
         vertical-align: top;
-        width: 100%;
-        height: auto;
+        .img-responsive;
     }
 
     &:before {
@@ -535,8 +595,15 @@ footer {
         opacity: 0.5;
     }
 
-    &:hover {
+    &:before:hover {
         opacity: 0.7;
+    }
+}
+
+.tint-edge {
+
+    &:before {
+        border-radius: 0 !important;
     }
 }
 
@@ -628,6 +695,20 @@ footer {
     }
 }
 
+// Player ===================================================================
+.player {
+    .center-block;
+
+    .audio {
+        .center-block;
+        margin-top: @spacing-md-px;
+    }
+
+    .hidden {
+        animation: fade-in .3s ease;
+    }
+}
+
 // Typography =================================================================
 
 .lead {
@@ -658,7 +739,7 @@ blockquote {
 
 // default styling should be for phones 767px or less
 
-// Small devices (tablets, 768px and up)
+// Small devices (tablets, 768px and up) (iPhone 5)
 @media (min-width: @screen-sm-min) {
 
     footer {
@@ -756,11 +837,29 @@ blockquote {
         }
     }
 
-    .next-step {
+    .two-wide {
+        h2 {
+            font-size: 2.6em;
+        }
+
+        p {
+            .text-center;
+        }
+
+        div {
+            .center-block;
+        }
+    }
+
+
+    .message-item {
+        .tint {
             h2 {
-        font-size: 2.6em;
+                font-size: 1em;
+            }
+        }
     }
-    }
+
 
     .swap-wrapper-inline {
         display: inline-flex;
@@ -787,7 +886,7 @@ blockquote {
     }
 }
 
-// Medium devices (desktops, 992px and up)
+// Medium devices (desktops, 992px and up) (iPad Mini)
 @media (min-width: @screen-md-min) {
     .captioncontainer {
         margin: @spacing-sm-px;
@@ -799,20 +898,29 @@ blockquote {
         }
 
         p {
-            font-size: 1.6em;
+            font-size: 2em;
         }
     }
 
-    .next-step {
-            h2 {
-        font-size: 2.5em;
+    .two-wide {
+        h2 {
+            font-size: 2.5em;
+        }
     }
+
+    .message-item {
+        .tint {
+            h2 {
+                font-size: 1.4em;
+            }
+        }
     }
 }
 
 // Large devices (large desktops, 1200px and up)
 @media (min-width: @screen-lg-min) {
     .banner {
+
         h1 {
             font-size: 5.5em;
         }
@@ -822,9 +930,17 @@ blockquote {
         }
     }
 
-    .next-step {
-            h2 {
-        font-size: 2.6em;
+    .two-wide {
+        h2 {
+            font-size: 2.6em;
+        }
     }
+
+    .message-item {
+        .tint {
+            h2 {
+                font-size: 1.8em;
+            }
+        }
     }
 }
