@@ -2,10 +2,8 @@
   {% for campus in Campuses %}
   {% assign campusTotal = forloop.length %}
   {% assign campusOdd = campusTotal | Modulo:2 %}
-  {% assign split1 = Items[forloop.index0].Image | Split:'=' %}
-  {% assign guid = split1.[2] | Truncate:36,'' %}
   {% if campusOdd == 1 and forloop.last == 'true' %}
-  <div class="col-md-12 campus-list">
+  <div class="col-md-12">
     {% else %}
     <div class="col-md-6">
       {% endif %}
@@ -14,7 +12,7 @@
       rgba(0, 0, 0, 0.7),
       rgba(0, 0, 0, 0.7)
     ),
-    url(/GetImage.ashx?guid={{ guid }});">
+    url(/GetImage.ashx?guid={{ Items.[forloop.index0] | Attribute:'Image', 'RawValue' }});">
         <h3>{{ campus.Name }}</h3>
         <p>{{ campus.Location.Street1 }}, {{ campus.Location.PostalCode }}</p>
         {% for time in campus.ServiceTimes %}
@@ -25,7 +23,7 @@
         </p>
         {% endfor %}
         <h4>
-          <a href="~/location?campusId={{ campus.Id }}">Discover More ></a>
+          <a href="/location?campusId={{ campus.Id }}">Discover More ></a>
         </h4>
       </div>
     </div>
