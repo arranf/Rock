@@ -1,0 +1,118 @@
+{% for item in Items %}
+<div class="col-md-4">
+  <div class="col-md-12">
+    <h3 class="text-center">{{ item.Title }}</h3>
+  </div>
+  <div class="two-wide message-item">
+    <div class="col-md-12">
+      {% if item.Image and item.Image != empty %}
+      {{ item.Image }}
+      {% else %}
+      <div class="tint">
+        <h2>{{ item.Title }}</h2>
+          <img src="https://placeholdit.imgix.net/~text?txtsize=34&txt=360%C3%97180&w=360&h=180" />
+      </div>
+      {% endif %}
+    </div>
+    <div class="col-md-12 podcast-date">
+      {% assign date = item | Attribute:'Date' %}
+      <p class="lead">
+        <b>{{ date | Date:'d/M/yy' }}</b>
+        <br />
+        <small>{{ date | HumanizeDateTime }}</small>
+      </p>
+      <p>{{ item.Content | StripHtml | Truncate:120,'...' }}</p>
+    </div>
+    <div class="col-md-12">
+      <div class="buttons">
+        <a class="btn btn-primary" href="#player" data-toggle="collapse" onclick="
+$('#player{{ item.Id }}').toggleClass('hidden');">
+
+          <i class="fa fa-headphones fa-lg"></i> Listen
+        </a>
+        <a class="btn btn-default" href="{{ 'Global' | Attribute:'PublicApplicationRoot' }}/GetFile.ashx?guId={{ item | Attribute:'Audio', 'RawValue' }}" download="">
+          <i class="fa fa-download fa-lg"></i> Download
+        </a>
+      </div>
+    </div>
+
+    <div class="col-md-12 collapse" id="player">
+      <div class="player hidden" id="player{{ item.Id }}">
+        <audio controls="" class=" audio" id="audio{{ item.Id }}">
+          <!-- Audio files -->
+          <source src="{{ 'Global' | Attribute:'PublicApplicationRoot' }}/GetFile.ashx?guId={{ item | Attribute:'Audio', 'RawValue' }}" type="audio/mp3">
+
+            <!-- Fallback for browsers that don't support the <audio> element -->
+            <a href="{{ 'Global' | Attribute:'PublicApplicationRoot' }}/GetFile.ashx?guId={{ item | Attribute:'Audio', 'RawValue' }}">Download</a>
+         </audio>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endfor %}
+
+<div class="col-md-12 podcast-pages">
+{% if Pagination.TotalPages > 1 %}
+    <div class="btn-group" role="group" aria-label="...">
+            {% if Pagination.PreviousPage != -1  %}
+                {% if Pagination.NextPage != -1 %}
+                    <a class="btn btn-default" id="page-button-{{ Pagination.PreviousPage }}" href="?page={{ Pagination.PreviousPage }}">{{ Pagination.PreviousPage }}</a>
+                    <a class="btn btn-default" id="page-button-{{ Pagination.CurrentPage }}" href="?page={{ Pagination.CurrentPage }}">{{ Pagination.CurrentPage }}</a>
+                    <a class="btn btn-default" id="page-button-{{ Pagination.NextPage }}" href="?page={{ Pagination.NextPage }}">{{ Pagination.NextPage }}</a>
+                {% elseif Pagination.PreviousPage != 1 %}
+                <a class="btn btn-default" id="page-button-{{ Pagination.PreviousPage | Minus:1 }}" href="?page={{ Pagination.PreviousPage | Minus:1 }}">{{ Pagination.PreviousPage | Minus:1 }}</a>
+                <a class="btn btn-default" id="page-button-{{ Pagination.PreviousPage }}" href="?page={{ Pagination.PreviousPage }}">{{ Pagination.PreviousPage }}</a>
+                <a class="btn btn-default" id="page-button-{{ Pagination.CurrentPage }}" href="?page={{ Pagination.CurrentPage }}">{{ Pagination.CurrentPage }}</a>
+                {% else %}
+                <a class="btn btn-default" id="page-button-{{ Pagination.PreviousPage }}" href="?page={{ Pagination.PreviousPage }}">{{ Pagination.PreviousPage }}</a>
+                <a class="btn btn-default" id="page-button-{{ Pagination.CurrentPage }}" href="?page={{ Pagination.CurrentPage }}">{{ Pagination.CurrentPage }}</a>
+                {% endif %}    
+            {% else  %}
+                {% if Pagination.CurrentPage != Pagination.TotalPages %}        
+                    <a class="btn btn-default" id="page-button-{{ Pagination.CurrentPage }}" href="?page={{ Pagination.CurrentPage }}">{{ Pagination.CurrentPage }}</a>
+                    <a class="btn btn-default" id="page-button-{{ Pagination.NextPage }}" href="?page={{ Pagination.NextPage }}">{{ Pagination.NextPage }}</a>
+                    <a class="btn btn-default" id="page-button-{{ Pagination.NextPage | Plus:1  }}" href="?page={{ Pagination.NextPage | Plus:1 }}">{{ Pagination.NextPage | Plus:1  }}</a>
+                {% else %}
+                    <a class="btn btn-default" id="page-button-{{ Pagination.CurrentPage }}" href="?page={{ Pagination.CurrentPage }}">{{ Pagination.CurrentPage }}</a>
+                    <a class="btn btn-default" id="page-button-{{ Pagination.NextPage }}" href="?page={{ Pagination.NextPage }}">{{ Pagination.NextPage }}</a>
+                {% endif %}
+            {% endif %}
+        </div>    
+    {% endif %}
+</div>
+
+<script>
+(function(d, p) {
+  var a = new XMLHttpRequest(),
+    b = d.body;
+  a.open("GET", p, true);
+  a.send();
+  a.onload = function() {
+    var c = d.createElement("div");
+    c.style.display = "none";
+    c.innerHTML = a.responseText;
+    b.insertBefore(c, b.childNodes[0]);
+  }
+})(document, "https://cdn.plyr.io/1.3.4/sprite.svg");
+</script>
+
+<script>
+$(document).ready(function(){
+    $('#page-button-{{ Pagination.CurrentPage }}').addClass('btn-primary').addClass('active').removeClass('btn-default');
+});
+</script>
+
+<script src="https://cdn.plyr.io/1.3.4/plyr.js?1"></script>
+<script>
+plyr.setup({
+  debug: true,
+  volume: 9,
+  controls: ["play", "current-time", "duration", "mute"],
+  onSetup: function() {
+    if (!("media" in this)) {
+      return;
+    }
+  }
+});
+</script>
