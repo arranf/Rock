@@ -5,17 +5,16 @@
   <div class="testimony-container">
     <div class="col-md-4">
       <div class ="box">
-        <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}</a>
+        <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Image }}
         <div class="overbox">
-          <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">
             <div class="title overtext">
               <a href="{{ LinkedPages.DetailPage }}?Item={{ item.Id }}">{{ item.Person }}</a>
             </div>
             <div class="tagline overtext">
               {{ item.Story | Truncate:85,'...' }}
             </div>
-          </a>
         </div>
+        </a>
       </div>
     </div>
 
