@@ -5,7 +5,7 @@
   {% if campusOdd == 1 and forloop.last == 'true' %}
   <div class="col-md-12">
     {% else %}
-    <div class="col-md-6">
+    <div class="col-md-6 campus-container">
       {% endif %}
       <div class=" campus-list" style="background: 
     linear-gradient(

@@ -14730,6 +14730,12 @@ img {
 .navbar .navbar-toggle i.fa-bars {
   color: #fff;
 }
+.navbar .navbar-collapse {
+  border-color: #3f81d7;
+}
+.well {
+  margin-bottom: 0px;
+}
 a:hover,
 a:active,
 a:focus,
@@ -14902,7 +14908,10 @@ footer a:active,
 footer a:focus {
   color: #cccccc;
 }
-.campus-list {
+.campus-container {
+  padding-bottom: 6px;
+}
+.campus-container .campus-list {
   text-align: center;
   display: block;
   margin-left: auto;
@@ -14918,19 +14927,19 @@ footer a:focus {
   padding-top: 5px;
   width: 90%;
 }
-.campus-list h1,
-.campus-list h2,
-.campus-list h3,
-.campus-list h4 {
+.campus-container .campus-list h1,
+.campus-container .campus-list h2,
+.campus-container .campus-list h3,
+.campus-container .campus-list h4 {
   font-weight: 700;
 }
-.campus-list p {
+.campus-container .campus-list p {
   font-size: 20px;
 }
-.campus-list a {
+.campus-container .campus-list a {
   color: #93b8e9;
 }
-.campus-list a:hover {
+.campus-container .campus-list a:hover {
   color: #bed4f1;
 }
 .vert-stack {
@@ -14962,6 +14971,7 @@ footer a:focus {
 .pastor-box {
   background-color: #93b8e9;
   color: #fff;
+  padding-bottom: 6px;
 }
 .pastor-box i {
   padding-right: 5px;
@@ -15009,6 +15019,15 @@ footer a:focus {
   max-width: 100%;
   height: auto;
 }
+.top-stripe {
+  background-color: #699de0;
+  padding: 6px 12px 6px 12px;
+}
+.top-stripe p {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
 .message-item .buttons {
   display: block;
   margin-left: auto;
@@ -15020,18 +15039,6 @@ footer a:focus {
 }
 .message-item .buttons img {
   margin-bottom: 15px;
-}
-.message-date .lead {
-  margin-bottom: 7.5px;
-}
-.top-stripe {
-  background-color: #699de0;
-  padding: 6px 12px 6px 12px;
-}
-.top-stripe p {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 600;
 }
 .message-item .tint h2 {
   font-size: 1.3em;
@@ -15213,22 +15220,8 @@ footer a:focus {
 .tint-edge:before:hover {
   opacity: 0.7;
 }
-.tint-edge {
-  max-width: 1680px;
-  background-color: #93b8e9;
-  background-size: cover;
-  background-position: 50% 50%;
-}
-.tint-edge img {
-  object-fit: cover;
-  height: 100%;
-  max-height: 100px;
-}
 .tint-edge:before {
   border-radius: 0 !important;
-}
-.img-square {
-  border-radius: 0px;
 }
 .img-dark {
   position: relative;
@@ -15460,6 +15453,13 @@ blockquote small {
   }
   .message-item .tint h2 {
     font-size: 1.4em;
+  }
+  .desktop-vert-align {
+    display: flex;
+    align-items: center;
+  }
+  .well {
+    margin-bottom: 20px;
   }
 }
 @media (min-width: 1200px) {

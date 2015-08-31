@@ -64,8 +64,15 @@ img {
             color: #fff;
         }
     }
+
+    .navbar-collapse {
+        border-color: @theme-2;
+    }
 }
 
+.well {
+    margin-bottom: 0px;
+}
 
 a:hover, a:active, a:focus, i.fs {
     text-decoration: none;
@@ -280,33 +287,36 @@ footer {
 }
 
 //visit items
-.campus-list {
-    .text-center;
-    .center-block;
-    border-radius: 10px;
-    background: no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    color: #fff;
+.campus-container {
     padding-bottom: @padding-base-vertical;
-    padding-top: @padding-small-vertical;
-    width: 90%;
+    .campus-list {
+        .text-center;
+        .center-block;
+        border-radius: 10px;
+        background: no-repeat center center fixed;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        color: #fff;
+        padding-bottom: @padding-base-vertical;
+        padding-top: @padding-small-vertical;
+        width: 90%;
 
-    h1, h2, h3, h4 {
-        font-weight: @font-weight-bold;
-    }
+        h1, h2, h3, h4 {
+            font-weight: @font-weight-bold;
+        }
 
-    p {
-        font-size: @font-size-large;
-    }
+        p {
+            font-size: @font-size-large;
+        }
 
-    a {
-        color: @theme-3;
+        a {
+            color: @theme-3;
 
-        &:hover {
-            color: @theme-4;
+            &:hover {
+                color: @theme-4;
+            }
         }
     }
 }
@@ -347,6 +357,7 @@ footer {
 .pastor-box {
     background-color: @theme-3;
     color: #fff;
+    padding-bottom: @padding-base-vertical;
 
     i {
         padding-right: 5px;
@@ -375,7 +386,6 @@ footer {
     }
 }
 
-//next steps
 .two-wide {
     .center-block;
     padding-top: @padding-large-vertical;
@@ -391,27 +401,6 @@ footer {
     }
 }
 
-.message-item {
-    .buttons {
-        .center-block;
-        .text-center;
-
-        h2 {
-            font-size: 1.5em;
-        }
-
-        img {
-            margin-bottom: @spacing-md-px;
-        }
-    }
-}
-
-.message-date {
-
-    .lead {
-        margin-bottom: @spacing-sm-px;
-    }
-}
 
 //listen
 
@@ -427,6 +416,18 @@ footer {
 }
 
 .message-item {
+     .buttons {
+        .center-block;
+        .text-center;
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        img {
+            margin-bottom: @spacing-md-px;
+        }
+    }
     .tint {
         h2 {
             font-size: 1.3em;
@@ -571,6 +572,7 @@ footer {
         -webkit-transform: translateX(0px);
     }
 }
+
 
 .tint, .tint-edge {
     position: relative;
@@ -915,6 +917,16 @@ blockquote {
             }
         }
     }
+
+    .desktop-vert-align {
+    display: flex;
+    align-items: center;
+}
+
+    .well {
+        margin-bottom: 20px;
+    }
+
 }
 
 // Large devices (large desktops, 1200px and up)
