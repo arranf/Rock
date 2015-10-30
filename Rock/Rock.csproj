@@ -517,6 +517,8 @@
     <Compile Include="Reporting\DataTransform\Person\ChildrenTransform.cs" />
     <Compile Include="Reporting\ReportingHelper.cs" />
     <Compile Include="Reporting\DataSelect\Person\GroupParticipationSelect.cs" />
+    <Compile Include="Search\DataView\Name.cs" />
+    <Compile Include="Search\Reports\Name.cs" />
     <Compile Include="Security\Authentication\Twitter.cs" />
     <Compile Include="Transactions\SaveCommunicationTransaction.cs" />
     <Compile Include="Transactions\SendPaymentReciepts.cs" />
