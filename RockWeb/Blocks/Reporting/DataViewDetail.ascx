@@ -9,6 +9,7 @@
 
                 <div class="panel-heading">
                     <h1 class="panel-title"><i class="fa fa-filter"></i> <asp:Literal ID="lActionTitle" runat="server" /></h1>
+                    <Rock:HighlightLabel CssClass="pull-right" ID="hlblEditDataViewId" runat="server" />
                 </div>
                 <div class="panel-body">
 
@@ -45,6 +46,7 @@
 
                 <div class="panel-heading">
                     <h1 class="panel-title"><i class="fa fa-filter"></i> <asp:Literal ID="lReadOnlyTitle" runat="server" /></h1>
+                    <Rock:HighlightLabel CssClass="pull-right" ID="hlblDataViewId" runat="server" />
                 </div>
                 <div class="panel-body">
 
