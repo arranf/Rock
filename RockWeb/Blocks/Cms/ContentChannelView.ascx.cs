@@ -491,7 +491,7 @@ $(document).ready(function() {
 
             // set page title
             if ( GetAttributeValue( "SetPageTitle" ).AsBoolean() && content.Count > 0 )
-            {               
+            {
                 if ( string.IsNullOrWhiteSpace( PageParameter( "Item" ) ) )
                 {
                     // set title to channel name
@@ -506,6 +506,12 @@ $(document).ready(function() {
                     RockPage.PageTitle = itemTitle;
                     RockPage.BrowserTitle = String.Format( "{0} | {1}", itemTitle, RockPage.Site.Name );
                     RockPage.Header.Title = String.Format( "{0} | {1}", itemTitle, RockPage.Site.Name );
+                }
+
+                var pageBreadCrumb = RockPage.PageReference.BreadCrumbs.FirstOrDefault();
+                if ( pageBreadCrumb != null )
+                {
+                    pageBreadCrumb.Name = RockPage.PageTitle;
                 }
             }
 
@@ -592,17 +598,25 @@ $(document).ready(function() {
 
         private Template GetTemplate()
         {
-            var template = GetCacheItem( TEMPLATE_CACHE_KEY ) as Template;
-            if ( template == null )
-            {
-                template = Template.Parse( GetAttributeValue( "Template" ) );
+            Template template = null;
 
-                int? cacheDuration = GetAttributeValue( "CacheDuration" ).AsInteger();
-                if ( cacheDuration > 0 )
+            try {
+                template = GetCacheItem( TEMPLATE_CACHE_KEY ) as Template;
+                if ( template == null )
                 {
-                    var cacheItemPolicy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds( cacheDuration.Value ) };
-                    AddCacheItem( TEMPLATE_CACHE_KEY, template, cacheItemPolicy );
+                    template = Template.Parse( GetAttributeValue( "Template" ) );
+
+                    int? cacheDuration = GetAttributeValue( "CacheDuration" ).AsInteger();
+                    if ( cacheDuration > 0 )
+                    {
+                        var cacheItemPolicy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds( cacheDuration.Value ) };
+                        AddCacheItem( TEMPLATE_CACHE_KEY, template, cacheItemPolicy );
+                    }
                 }
+            }
+            catch(Exception ex )
+            {
+                template = Template.Parse( string.Format("Lava error: {0}", ex.Message ) );
             }
 
             return template;

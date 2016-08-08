@@ -30,12 +30,23 @@ namespace Rock.Model
     /// </summary>
     public partial class SignatureDocumentTemplateService
     {
+        /// <summary>
+        /// Sends the document.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="alternateEmail">The alternate email.</param>
+        /// <param name="errorMessages">The error messages.</param>
+        /// <returns></returns>
+        public bool SendDocument( SignatureDocument document, string alternateEmail, out List<string> errorMessages )
+        {
+            return SendDocument( document, null, null, null, string.Empty, alternateEmail, out errorMessages );
+        }
 
         /// <summary>
         /// Sends the document.
         /// </summary>
-        /// <param name="signatureDocumentTemplate">Type of the signature document.</param>
-        /// <param name="appliesToPerson">The person.</param>
+        /// <param name="signatureDocumentTemplate">The signature document template.</param>
+        /// <param name="appliesToPerson">The applies to person.</param>
         /// <param name="assignedToPerson">The assigned to person.</param>
         /// <param name="documentName">Name of the document.</param>
         /// <param name="alternateEmail">The alternate email.</param>
@@ -43,7 +54,41 @@ namespace Rock.Model
         /// <returns></returns>
         public bool SendDocument( SignatureDocumentTemplate signatureDocumentTemplate, Person appliesToPerson, Person assignedToPerson, string documentName, string alternateEmail, out List<string> errorMessages )
         {
+            return SendDocument( null, signatureDocumentTemplate, appliesToPerson, assignedToPerson, documentName, alternateEmail, out errorMessages );
+        }
+
+        /// <summary>
+        /// Sends the document.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="signatureDocumentTemplate">Type of the signature document.</param>
+        /// <param name="appliesToPerson">The person.</param>
+        /// <param name="assignedToPerson">The assigned to person.</param>
+        /// <param name="documentName">Name of the document.</param>
+        /// <param name="alternateEmail">The alternate email.</param>
+        /// <param name="errorMessages">The error messages.</param>
+        /// <returns></returns>
+        private bool SendDocument( SignatureDocument document, SignatureDocumentTemplate signatureDocumentTemplate, Person appliesToPerson, Person assignedToPerson, string documentName, string alternateEmail, out List<string> errorMessages )
+        {
             errorMessages = new List<string>();
+
+            // If document was passed and other values were not, set them from the document
+            if ( document != null )
+            {
+                signatureDocumentTemplate = signatureDocumentTemplate ?? document.SignatureDocumentTemplate;
+                if ( document.AppliesToPersonAlias != null && document.AppliesToPersonAlias.Person != null )
+                {
+                    appliesToPerson = appliesToPerson ?? document.AppliesToPersonAlias.Person;
+                }
+                if ( document.AssignedToPersonAlias != null && document.AssignedToPersonAlias.Person != null )
+                {
+                    assignedToPerson = assignedToPerson ?? document.AppliesToPersonAlias.Person;
+                    alternateEmail = !string.IsNullOrWhiteSpace( alternateEmail ) ? alternateEmail : document.AppliesToPersonAlias.Person.Email;
+                }
+
+                documentName = !string.IsNullOrWhiteSpace( documentName ) ? documentName : document.Name;
+            }
+
             if ( signatureDocumentTemplate == null )
             {
                 errorMessages.Add( "Invalid Document Type." );
@@ -79,50 +124,44 @@ namespace Rock.Model
 
                         var rockContext = this.Context as RockContext;
                         var documentService = new SignatureDocumentService( rockContext );
-                        var document = documentService.Queryable()
-                            .Where( d =>
-                                d.SignatureDocumentTemplateId == signatureDocumentTemplate.Id &&
-                                d.AppliesToPersonAlias.PersonId == appliesToPerson.Id &&
-                                d.AssignedToPersonAlias.PersonId == assignedToPerson.Id &&
-                                d.Status != SignatureDocumentStatus.Signed )
-                            .OrderByDescending( d => d.CreatedDateTime )
-                            .FirstOrDefault();
+
                         if ( document == null )
                         {
-                            string documentKey = provider.CreateDocument( signatureDocumentTemplate, appliesToPerson, assignedToPerson, documentName, out sendErrors, true );
-                            if ( documentKey != null )
-                            {
-                                document = new SignatureDocument();
-                                document.SignatureDocumentTemplate = signatureDocumentTemplate;
-                                document.SignatureDocumentTemplateId = signatureDocumentTemplate.Id;
-                                document.Name = documentName;
-                                document.DocumentKey = documentKey;
-                                document.AppliesToPersonAliasId = appliesToPerson.PrimaryAliasId;
-                                document.AssignedToPersonAliasId = assignedToPerson.PrimaryAliasId;
-                                documentService.Add( document );
+                            document = documentService.Queryable()
+                                .Where( d =>
+                                    d.SignatureDocumentTemplateId == signatureDocumentTemplate.Id &&
+                                    d.AppliesToPersonAlias.PersonId == appliesToPerson.Id &&
+                                    d.AssignedToPersonAlias.PersonId == assignedToPerson.Id &&
+                                    d.Status != SignatureDocumentStatus.Signed )
+                                .OrderByDescending( d => d.CreatedDateTime )
+                                .FirstOrDefault();
+                        }
 
-                                // Code to send a guest invite and use system email
-                                //var inviteErrors = new List<string>();
-                                //if ( !SendInvite( rockContext, provider, document, assignedToPerson, out inviteErrors ) )
-                                //{
-                                //    errorMessages.AddRange( inviteErrors );
-                                //}
-                            }
+                        string documentKey = string.Empty;
+                        if ( document == null || string.IsNullOrWhiteSpace( documentKey ) )
+                        {
+                            documentKey = provider.CreateDocument( signatureDocumentTemplate, appliesToPerson, assignedToPerson, documentName, out sendErrors, true );
                         }
                         else
                         {
+                            documentKey = document.DocumentKey;
                             provider.ResendDocument( document, out sendErrors );
+                        }
 
-                            // Code to send a guest invite and use system email
-                            //var inviteErrors = new List<string>();
-                            //if ( !SendInvite( rockContext, provider, document, assignedToPerson, out inviteErrors ) )
-                            //{
-                            //    errorMessages.AddRange( inviteErrors );
-                            //}
+                        if ( document == null )
+                        {
+                            document = new SignatureDocument();
+                            document.SignatureDocumentTemplate = signatureDocumentTemplate;
+                            document.SignatureDocumentTemplateId = signatureDocumentTemplate.Id;
+                            document.Name = documentName;
+                            document.AppliesToPersonAliasId = appliesToPerson.PrimaryAliasId;
+                            document.AssignedToPersonAliasId = assignedToPerson.PrimaryAliasId;
+                            documentService.Add( document );
                         }
 
                         if ( !sendErrors.Any() )
                         {
+                            document.DocumentKey = documentKey;
                             document.LastInviteDate = RockDateTime.Now;
                             document.InviteCount = document.InviteCount + 1;
                             if ( document.Status != SignatureDocumentStatus.Sent )
@@ -137,6 +176,45 @@ namespace Rock.Model
                         {
                             errorMessages.AddRange( sendErrors );
                         }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Cancels the document.
+        /// </summary>
+        /// <param name="document">The document.</param>
+        /// <param name="errorMessages">The error messages.</param>
+        /// <returns></returns>
+        public bool CancelDocument( SignatureDocument document, out List<string> errorMessages )
+        {
+            errorMessages = new List<string>();
+            if ( document == null || document.SignatureDocumentTemplate == null )
+            {
+                errorMessages.Add( "Invalid Document or Template." );
+            }
+
+            if ( !errorMessages.Any() )
+            {
+                var provider = DigitalSignatureContainer.GetComponent( document.SignatureDocumentTemplate.ProviderEntityType.Name );
+                if ( provider == null || !provider.IsActive )
+                {
+                    errorMessages.Add( "Digital Signature provider was not found or is not active." );
+                }
+                else
+                {
+                    if ( provider.CancelDocument( document, out errorMessages ) )
+                    {
+                        if ( document.Status != SignatureDocumentStatus.Cancelled )
+                        {
+                            document.LastStatusDate = RockDateTime.Now;
+                        }
+                        document.Status = SignatureDocumentStatus.Cancelled;
+
+                        return true;
                     }
                 }
             }
@@ -192,6 +270,7 @@ namespace Rock.Model
         /// Updates the document status.
         /// </summary>
         /// <param name="signatureDocument">The signature document.</param>
+        /// <param name="tempFolderPath">The temporary folder path.</param>
         /// <param name="errorMessages">The error messages.</param>
         /// <returns></returns>
         public bool UpdateDocumentStatus( SignatureDocument signatureDocument, string tempFolderPath, out List<string> errorMessages )
@@ -216,29 +295,33 @@ namespace Rock.Model
                 }
                 else
                 {
-                    if ( provider.IsDocumentSigned( signatureDocument, out errorMessages ) )
+                    var originalStatus = signatureDocument.Status;
+                    if ( provider.UpdateDocumentStatus( signatureDocument, out errorMessages ) )
                     {
-                        using ( var rockContext = new RockContext() )
+                        if ( signatureDocument.Status != originalStatus && signatureDocument.Status == SignatureDocumentStatus.Signed )
                         {
-                            string documentPath = provider.GetDocument( signatureDocument, tempFolderPath, out errorMessages );
-                            if ( !string.IsNullOrWhiteSpace( documentPath ) )
+                            using ( var rockContext = new RockContext() )
                             {
-                                var binaryFileService = new BinaryFileService( rockContext );
-                                BinaryFile binaryFile = new BinaryFile();
-                                binaryFile.Guid = Guid.NewGuid();
-                                binaryFile.IsTemporary = false;
-                                binaryFile.BinaryFileTypeId = signatureDocument.SignatureDocumentTemplate.BinaryFileTypeId;
-                                binaryFile.MimeType = "application/pdf";
-                                binaryFile.FileName = new FileInfo( documentPath ).Name;
-                                binaryFile.ContentStream = new FileStream( documentPath, FileMode.Open );
-                                binaryFileService.Add( binaryFile );
-                                rockContext.SaveChanges();
+                                string documentPath = provider.GetDocument( signatureDocument, tempFolderPath, out errorMessages );
+                                if ( !string.IsNullOrWhiteSpace( documentPath ) )
+                                {
+                                    var binaryFileService = new BinaryFileService( rockContext );
+                                    BinaryFile binaryFile = new BinaryFile();
+                                    binaryFile.Guid = Guid.NewGuid();
+                                    binaryFile.IsTemporary = false;
+                                    binaryFile.BinaryFileTypeId = signatureDocument.SignatureDocumentTemplate.BinaryFileTypeId;
+                                    binaryFile.MimeType = "application/pdf";
+                                    binaryFile.FileName = new FileInfo( documentPath ).Name;
+                                    binaryFile.ContentStream = new FileStream( documentPath, FileMode.Open );
+                                    binaryFileService.Add( binaryFile );
+                                    rockContext.SaveChanges();
 
-                                signatureDocument.BinaryFileId = binaryFile.Id;
-                                signatureDocument.Status = SignatureDocumentStatus.Signed;
-                                signatureDocument.LastStatusDate = RockDateTime.Now;
+                                    signatureDocument.BinaryFileId = binaryFile.Id;
+                                    signatureDocument.Status = SignatureDocumentStatus.Signed;
+                                    signatureDocument.LastStatusDate = RockDateTime.Now;
 
-                                File.Delete( documentPath );
+                                    File.Delete( documentPath );
+                                }
                             }
                         }
                     }

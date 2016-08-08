@@ -72,7 +72,7 @@ namespace RockWeb.Blocks.Core
                     } )
                     .ToList();
                 ddlDocumentType.DataBind();
-                ddlDocumentType.Items.Insert( 0, new ListItem( "", "0" ) );
+                ddlDocumentType.Items.Insert( 0, new ListItem( "", "" ) );
             }
         }
 
@@ -84,7 +84,7 @@ namespace RockWeb.Blocks.Core
         {
             base.OnLoad( e );
 
-            nbSend.Visible = false;
+            nbErrorMessage.Visible = false;
 
             if ( !Page.IsPostBack )
             {
@@ -113,7 +113,19 @@ namespace RockWeb.Blocks.Core
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected void btnSave_Click( object sender, EventArgs e )
         {
+            bool inviteCancelled = false;
+
             var rockContext = new RockContext();
+
+            int? documentTemplateId = ddlDocumentType.SelectedValueAsInt();
+            if ( !documentTemplateId.HasValue )
+            {
+                nbErrorMessage.Title = string.Empty;
+                nbErrorMessage.Text = "Document Template is Required!";
+                nbErrorMessage.NotificationBoxType = NotificationBoxType.Danger;
+                nbErrorMessage.Visible = true;
+                return;
+            }
 
             SignatureDocument signatureDocument = null;
             SignatureDocumentService service = new SignatureDocumentService( rockContext );
@@ -140,13 +152,14 @@ namespace RockWeb.Blocks.Core
             {
                 signatureDocument.Status = newStatus;
                 signatureDocument.LastStatusDate = RockDateTime.Now;
+                inviteCancelled = newStatus == SignatureDocumentStatus.Cancelled;
             }
 
             signatureDocument.AppliesToPersonAliasId = ppAppliesTo.PersonAliasId;
             signatureDocument.AssignedToPersonAliasId = ppAssignedTo.PersonAliasId;
             signatureDocument.SignedByPersonAliasId = ppSignedBy.PersonAliasId;
 
-            signatureDocument.SignatureDocumentTemplateId = ddlDocumentType.SelectedValueAsInt() ?? 0;
+            signatureDocument.SignatureDocumentTemplateId = documentTemplateId.Value;
 
             origBinaryFileId = signatureDocument.BinaryFileId;
             signatureDocument.BinaryFileId = fuDocument.BinaryFileId;
@@ -180,10 +193,16 @@ namespace RockWeb.Blocks.Core
 
             rockContext.SaveChanges();
 
-            var qryParams = new Dictionary<string, string>();
-            qryParams.Add( "SignatureDocumentTemplateId", PageParameter( "SignatureDocumentTemplateId" ) );
-            qryParams.Add( "personId", PageParameter( "personId" ) );
-            NavigateToParentPage( qryParams );
+            if ( inviteCancelled && !string.IsNullOrWhiteSpace( signatureDocument.DocumentKey ) )
+            {
+                var errorMessages = new List<string>();
+                if ( new SignatureDocumentTemplateService( rockContext ).CancelDocument( signatureDocument, out errorMessages ) )
+                {
+                    rockContext.SaveChanges();
+                }
+            }
+
+            ReturnToParent();
         }
 
         /// <summary>
@@ -193,10 +212,7 @@ namespace RockWeb.Blocks.Core
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         protected void btnCancel_Click( object sender, EventArgs e )
         {
-            var qryParams = new Dictionary<string, string>();
-            qryParams.Add( "SignatureDocumentTemplateId", PageParameter( "SignatureDocumentTemplateId" ) );
-            qryParams.Add( "personId", PageParameter( "personId" ) );
-            NavigateToParentPage( qryParams );
+            ReturnToParent();
         }
 
         /// <summary>
@@ -212,37 +228,27 @@ namespace RockWeb.Blocks.Core
                 using ( var rockContext = new RockContext() )
                 {
                     var signatureDocument = new SignatureDocumentService( rockContext ).Get( signatureDocumentId.Value );
-                    if ( signatureDocument != null && signatureDocument.SignatureDocumentTemplate != null &&
-                        signatureDocument.AppliesToPersonAlias != null && signatureDocument.AssignedToPersonAlias != null )
+                    if ( signatureDocument != null ) 
                     {
                         var errorMessages = new List<string>();
-                        if ( new SignatureDocumentTemplateService( rockContext ).SendDocument(
-                            signatureDocument.SignatureDocumentTemplate, signatureDocument.AssignedToPersonAlias.Person,
-                            signatureDocument.AssignedToPersonAlias.Person,
-                            signatureDocument.Name, signatureDocument.AppliesToPersonAlias.Person.Email, out errorMessages ) )
+                        if ( new SignatureDocumentTemplateService( rockContext ).SendDocument( signatureDocument, string.Empty, out errorMessages ) )
                         {
-                            var lastInviteDate = RockDateTime.Now;
-                            lRequestDate.Text = string.Format( "<span title='{0}'>{1}</span>", lastInviteDate.ToString(), lastInviteDate.ToElapsedString() );
+                            rockContext.SaveChanges();
 
-                            nbSend.Title = string.Empty;
-                            nbSend.Text = "Signature Invite Was Successfully Sent";
-                            nbSend.NotificationBoxType = NotificationBoxType.Success;
-                            nbSend.Visible = true;
+                            ShowEditDetails( signatureDocument, true );
+
+                            nbErrorMessage.Title = string.Empty;
+                            nbErrorMessage.Text = "Signature Invite Was Successfully Sent";
+                            nbErrorMessage.NotificationBoxType = NotificationBoxType.Success;
+                            nbErrorMessage.Visible = true;
                         }
                         else
                         {
-                            nbSend.Title = "Error Sending Signature Invite";
-                            nbSend.Text = string.Format( "<ul><li>{0}</li></ul>", errorMessages.AsDelimited( "</li><li>" ) );
-                            nbSend.NotificationBoxType = NotificationBoxType.Danger;
-                            nbSend.Visible = true;
+                            nbErrorMessage.Title = "Error Sending Signature Invite";
+                            nbErrorMessage.Text = string.Format( "<ul><li>{0}</li></ul>", errorMessages.AsDelimited( "</li><li>" ) );
+                            nbErrorMessage.NotificationBoxType = NotificationBoxType.Danger;
+                            nbErrorMessage.Visible = true;
                         }
-                    }
-                    else
-                    {
-                        nbSend.Title = "Error Sending Signature Invite";
-                        nbSend.Text = "<ul><li>'Applies To' and 'Assigned To' values are required</li></ul>";
-                        nbSend.NotificationBoxType = NotificationBoxType.Warning;
-                        nbSend.Visible = true;
                     }
                 }
             }
@@ -305,43 +311,46 @@ namespace RockWeb.Blocks.Core
         /// Shows the edit details.
         /// </summary>
         /// <param name="signatureDocument">Type of the defined.</param>
-        private void ShowEditDetails( SignatureDocument signatureDocument )
+        private void ShowEditDetails( SignatureDocument signatureDocument, bool onlyStatusDetails )
         {
-            string titleName = signatureDocument.SignatureDocumentTemplate != null ? signatureDocument.SignatureDocumentTemplate.Name + " Document" : SignatureDocument.FriendlyTypeName;
-            if ( signatureDocument.Id > 0 )
+            if ( !onlyStatusDetails )
             {
-                lTitle.Text = ActionTitle.Edit( titleName ).FormatAsHtmlTitle();
+                string titleName = signatureDocument.SignatureDocumentTemplate != null ? signatureDocument.SignatureDocumentTemplate.Name + " Document" : SignatureDocument.FriendlyTypeName;
+                if ( signatureDocument.Id > 0 )
+                {
+                    lTitle.Text = ActionTitle.Edit( titleName ).FormatAsHtmlTitle();
+                }
+                else
+                {
+                    lTitle.Text = ActionTitle.Add( titleName ).FormatAsHtmlTitle();
+                }
+
+                btnSend.Visible = signatureDocument.Id > 0 && signatureDocument.Status != SignatureDocumentStatus.Signed;
+                btnSend.Text = signatureDocument.Status == SignatureDocumentStatus.Sent ? "Resend Invite" : "Send Invite";
+
+                SetEditMode( true );
+
+                tbName.Text = signatureDocument.Name;
+
+                ppAppliesTo.SetValue( signatureDocument.AppliesToPersonAlias != null ? signatureDocument.AppliesToPersonAlias.Person : null );
+                ppAssignedTo.SetValue( signatureDocument.AssignedToPersonAlias != null ? signatureDocument.AssignedToPersonAlias.Person : null );
+                ppSignedBy.SetValue( signatureDocument.SignedByPersonAlias != null ? signatureDocument.SignedByPersonAlias.Person : null );
+
+                ddlDocumentType.Visible = signatureDocument.SignatureDocumentTemplate == null;
+                ddlDocumentType.SetValue( signatureDocument.SignatureDocumentTemplateId );
+
+                if ( signatureDocument.SignatureDocumentTemplate != null && signatureDocument.SignatureDocumentTemplate.BinaryFileType != null )
+                {
+                    fuDocument.BinaryFileTypeGuid = signatureDocument.SignatureDocumentTemplate.BinaryFileType.Guid;
+                }
+                fuDocument.BinaryFileId = signatureDocument.BinaryFileId;
             }
-            else
-            {
-                lTitle.Text = ActionTitle.Add( titleName ).FormatAsHtmlTitle();
-            }
-
-            btnSend.Visible = signatureDocument.Id > 0 && signatureDocument.Status != SignatureDocumentStatus.Signed;
-            btnSend.Text = signatureDocument.Status == SignatureDocumentStatus.Sent ? "Resend Invite" : "Send Invite";
-
-            SetEditMode( true );
-
-            tbName.Text = signatureDocument.Name;
 
             rbStatus.SelectedValue = signatureDocument.Status.ConvertToInt().ToString();
             hlStatusLastUpdated.Visible = signatureDocument.LastStatusDate.HasValue;
             hlStatusLastUpdated.Text = signatureDocument.LastStatusDate.HasValue ?
                 string.Format( "<span title='{0}'>Last Status Update: {1}</span>", signatureDocument.LastStatusDate.Value.ToString(), signatureDocument.LastStatusDate.Value.ToElapsedString() ) :
                 string.Empty;
-
-            ppAppliesTo.SetValue( signatureDocument.AppliesToPersonAlias != null ? signatureDocument.AppliesToPersonAlias.Person : null );
-            ppAssignedTo.SetValue( signatureDocument.AssignedToPersonAlias != null ? signatureDocument.AssignedToPersonAlias.Person : null );
-            ppSignedBy.SetValue( signatureDocument.SignedByPersonAlias != null ? signatureDocument.SignedByPersonAlias.Person : null );
-
-            ddlDocumentType.Visible = signatureDocument.SignatureDocumentTemplate == null;
-            ddlDocumentType.SetValue( signatureDocument.SignatureDocumentTemplateId );
-
-            if ( signatureDocument.SignatureDocumentTemplate != null && signatureDocument.SignatureDocumentTemplate.BinaryFileType != null )
-            {
-                fuDocument.BinaryFileTypeGuid = signatureDocument.SignatureDocumentTemplate.BinaryFileType.Guid;
-            }
-            fuDocument.BinaryFileId = signatureDocument.BinaryFileId;
 
             lDocumentKey.Text = signatureDocument.DocumentKey;
             lDocumentKey.Visible = !string.IsNullOrWhiteSpace( signatureDocument.DocumentKey );
@@ -350,7 +359,6 @@ namespace RockWeb.Blocks.Core
             lRequestDate.Text = signatureDocument.LastInviteDate.HasValue ?
                 string.Format( "<span title='{0}'>{1}</span>", signatureDocument.LastInviteDate.Value.ToString(), signatureDocument.LastInviteDate.Value.ToElapsedString() ) :
                 string.Empty;
-
         }
 
         /// <summary>
@@ -409,7 +417,7 @@ namespace RockWeb.Blocks.Core
                         var documentType = new SignatureDocumentTemplateService( rockContext ).Get( documentTypeId.Value );
                         if ( documentType != null )
                         {
-                            signatureDocument.SignatureDocumentTemplate= documentType;
+                            signatureDocument.SignatureDocumentTemplate = documentType;
                             signatureDocument.SignatureDocumentTemplateId = documentType.Id;
                         }
                     }
@@ -444,10 +452,29 @@ namespace RockWeb.Blocks.Core
                     }
                     else
                     {
-                        ShowEditDetails( signatureDocument );
+                        ShowEditDetails( signatureDocument, false );
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns to parent.
+        /// </summary>
+        private void ReturnToParent()
+        {
+            var qryParams = new Dictionary<string, string>();
+            int? personId = PageParameter( "PersonId" ).AsIntegerOrNull();
+            if ( personId.HasValue )
+            {
+                qryParams.Add( "PersonId", personId.Value.ToString() );
+            }
+            else
+            {
+                qryParams.Add( "SignatureDocumentTemplateId", PageParameter( "SignatureDocumentTemplateId" ) );
+            }
+
+            NavigateToParentPage( qryParams );
         }
 
         #endregion
